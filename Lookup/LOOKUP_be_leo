@@ -1,0 +1,110 @@
+### vim:ft=zsh:foldmethod=marker
+## dict.leo.org search backend for lookup
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+##
+## This was the first non-trivial backend for lookup. Therefore,
+## it contains some guidelines on how to write backends and what they
+## are expected to do.
+##
+## For consistency in usage among different backends, please try
+## to follow the general style of this one.
+##
+
+# Use 'emulate -L zsh' to create a known environment.
+# Use *this* test! It will handle our completion setup.
+[[ -z ${lookup_complete} ]] && emulate -L zsh
+
+# This check is required and it should be the first thing the backend does.
+# If $lookup_describe is not empty, only print a short description
+# of what the backend does. Without a newline at the end!
+[[ -n ${lookup_describe} ]] &&
+    printf '%s' 'translations via dict.leo.org' &&
+    return 0
+
+# declare variables. Assume warncreateglobal is enabled.
+local QUERY lang
+local -a comp_args
+local -A opts supported_langs interface_lang
+
+supported_langs=(
+    ende    'english german'
+    frde    'french german'
+    esde    'spanish german'
+    itde    'italian german'
+    chde    'chinese german'
+)
+
+# This test is needed, too.
+# Backends are supposed to bring there own completion.
+if [[ -n ${lookup_complete} ]] ; then
+    # During development, you can just put a
+    #return 0
+    # here. That will disable completion for the backend and
+    # prevent breakage for other backends.
+
+    # completion sub-functions should be called:
+    # __lookup_<backend>_<completion_feature>()
+    # guard their definition by checking the $functions[] entry
+    # that belongs to your sub-function.
+    (( ${+functions[__lookup_leo_supported_langs]} )) ||
+    function __lookup_leo_supported_langs() {
+        local l
+        local -a ls
+
+        ls=()
+        for l in ${(k)supported_langs}; do
+            ls+=("$l:${supported_langs[$l]}")
+        done
+        _describe -t leo_langs 'supported languages' ls
+    }
+
+    comp_args=(
+        '-l[set languages]:supported languages:__lookup_leo_supported_langs'
+        '*:dict.leo.org query:true'
+    )
+
+    _arguments -s -w -A '-*' ${comp_args} && return 0
+    _message 'dict.leo.org query'
+
+    return 0
+    # end of completion code #
+fi
+
+# parse possible options of the backend.
+# 'zparseopts' is the recommended way of doing that.
+zparseopts -A opts -D 'l:'
+lang=${opts[-l]}
+
+# all configuration should be done via zstyle
+# set reasonable defaults, too.
+if [[ -z ${lang} ]] ; then
+    zstyle -s ":lookup:-backend-:${backend}" default-lang lang || lang='ende'
+fi
+
+zstyle -s ":lookup:-backend-:${backend}" interface-lang interface_lang || interface_lang='en'
+
+# If applicable, use the remaining arguments as QUERY.
+QUERY="$*"
+
+# Do appropriate error checking and give usage information
+# if the query is empty.
+if [[ -z ${(Mk)supported_langs:#$lang} ]] ; then
+    printf 'Unknown language definition: '\''%s'\''.\n\n' ${lang}
+    # Clear out $QUERY, so we get the usage message below.
+    QUERY=''
+fi
+if [[ -z ${QUERY} ]] ; then
+    printf 'usage: %s [-s lang] <query>\n' ${backend}
+    printf '  -l <lang>     specify a language definition string\n'
+    printf '\nAvailable language definition strings:\n'
+    for lang in ${(k)supported_langs} ; do
+        printf '%6s   - %s\n' ${lang} ${supported_langs[$lang]}
+    done
+    return 1
+fi
+
+# Use our browser wrapper to open the URI, it'll handle everything just right.
+LOOKUP_browser "http://dict.leo.org?lang=${interface_lang}&lp=${lang}&search=${QUERY}"
+
+# Explicitly return $?.
+return $?

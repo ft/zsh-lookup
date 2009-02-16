@@ -1,0 +1,70 @@
+#compdef lookup lu
+### vim:ft=zsh:foldmethod=marker
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+
+function _lookup() {
+
+(( ${+functions[_lookup_aliases]} )) ||
+function _lookup_aliases() {
+    local al
+    local -a aliases
+
+    aliases=()
+    for al in ${(k)LOOKUP_aliases}; do
+        aliases+=("${al}:alias for ${LOOKUP_aliases[$al]}")
+    done
+
+    _describe  -t aliases 'backend alias' aliases
+}
+
+(( ${+functions[_lookup_backends]} )) ||
+function _lookup_backends() {
+    local be
+    local -a backends
+    local -x lookup_describe
+    lookup_describe='yes'
+
+    backends=()
+    for be in ${LOOKUP_backends}; do
+        backends+=("${be}:$(LOOKUP_be_${be})")
+    done
+
+    _describe -t backends 'backend' backends
+}
+
+(( ${+functions[_lookup_backends_and_aliases]} )) ||
+function _lookup_backends_and_aliases() {
+    _alternative \
+        'aliases: :_lookup_aliases' \
+        'commands: :_lookup_backends'
+}
+
+### start of _lookup() ###
+local context curcontext state line ret
+local -a args
+local -x backend
+local -ix lookup_complete
+
+lookup_complete=1
+args=(
+    '-l[list available backends]:'
+    '-s[(re)initialize backend list]:'
+    '-P[print which browser command would be used]'
+    '-R[send url to remote browser]'
+    '*:: :->be_or_options'
+)
+_arguments -C -s -w ${args} && return
+
+if [[ ${state} == "be_or_options" ]]; then
+    if (( CURRENT == 1 )) ; then
+        _lookup_backends_and_aliases
+    else
+        backend="${words[1]}"
+        curcontext="${curcontext%:*:*}:lookup-${backend}:"
+        _call_function ret LOOKUP_be_${backend}
+    fi
+fi
+
+} # end of _lookup()
+
+_lookup

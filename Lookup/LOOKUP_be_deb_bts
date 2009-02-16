@@ -1,0 +1,48 @@
+### vim:ft=zsh:foldmethod=marker
+## bugs.debian.org backend for lookup
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+
+[[ -z ${lookup_complete} ]] && emulate -L zsh
+[[ -n ${lookup_describe} ]] &&
+    printf '%s' 'get information about debian bugs by #id' &&
+    return 0
+
+local -a comp_args
+
+if [[ -n ${lookup_complete} ]] ; then
+    comp_args=(
+        '-p[go to package'\''s bts page]:package:_deb_packages avail'
+        '*:debian bts query:true'
+    )
+
+    _arguments -s -w -A '-*' ${comp_args} && return 0
+    _message 'debian bts query'
+    return 0
+fi
+
+local QUERY mode
+local -A opts
+
+mode='id'
+zparseopts -A opts -D p
+for opt in ${(k)opts} ; do
+    [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
+done
+[[ ${opts[-p]} == 'yes' ]] && mode='package'
+
+QUERY="$*"
+if [[ -z ${QUERY} ]] ; then
+    printf 'usage: %s <query>\n' ${backend}
+    printf '  -p    go to the bts page of a given package\n'
+    printf '\nBy default, this looks up bugs by bug id. In this mode, hash\n'
+    printf 'signs are automatically stripped off of the query.\n'
+    return 1
+fi
+
+if [[ ${mode} == 'id' ]] ; then
+    LOOKUP_browser "http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=${QUERY//\#/}"
+    return $?
+else
+    LOOKUP_browser "http://bugs.debian.org/${QUERY// /%20}"
+    return $?
+fi

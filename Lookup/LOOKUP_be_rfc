@@ -1,0 +1,98 @@
+### vim:ft=zsh:foldmethod=marker
+## RFC backend for lookup
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+
+# TODO:
+#   This is currently just a real lookup.
+#   rfc-editor.com supports searching, too. ...would be nice...
+
+[[ -z ${lookup_complete} ]] && emulate -L zsh
+[[ -n ${lookup_describe} ]] &&
+    printf '%s' 'RFC lookup' &&
+    return 0
+
+local -a comp_args
+
+if [[ -n ${lookup_complete} ]] ; then
+    comp_args=(
+        '-d[attempt do download RFCs]:'
+        '-w[never attempt do download RFCs]:'
+        '*:RFC number:true'
+    )
+
+    _arguments -s -w -A '-*' ${comp_args} && return 0
+    _message 'RFC number'
+    return 0
+fi
+
+local QUERY dir file save_path search_path yesno
+local -i justwatch
+local -A opts
+
+zstyle -s ":lookup:backend:${backend}" save-path   save_path
+zstyle -a ":lookup:backend:${backend}" search-path search_path
+
+if zstyle -t ":lookup:backend:${backend}" download ; then
+    justwatch='0'
+else
+    justwatch='1'
+fi
+
+zparseopts -A opts -D d w
+for opt in ${(k)opts} ; do
+    [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
+done
+[[ ${opts[-d]} == 'yes' ]] && justwatch=0
+[[ ${opts[-w]} == 'yes' ]] && justwatch=1
+
+QUERY="$*"
+if [[ -z ${QUERY} ]] ; then
+    printf 'usage: %s [-w] <query>\n' ${backend}
+    printf '  -d    ask to download RFC before reading\n'
+    printf '  -w    just watch. do not ask to download\n'
+    return 1
+fi
+
+for dir in ${search_path} ; do
+    file="${dir}/rfc${QUERY}.txt"
+    if [[ -r ${file} ]] ; then
+        LOOKUP_browser ${file}
+        return $?
+    elif [[ -r ${file}.gz ]]  ; then
+        backend="${backend}-local"
+        LOOKUP_browser ${file}.gz
+        return $?
+    elif [[ -r ${file}.bz2 ]] ; then
+        backend="${backend}-local"
+        LOOKUP_browser ${file}.bz2
+        return $?
+    fi
+done
+
+if (( lookup_printout == 0 )) && (( justwatch == 0 )) && [[ -n ${save_path} ]] ; then
+    if [[ -z ${builtins[zftp]} ]] ; then
+        if ! zmodload zsh/zftp ; then
+            printf 'Module zsh/zftp could not be loaded, cannot download.\n'
+            return 1
+        fi
+    fi
+    printf 'RFC: %s, save-path: %s\n' ${QUERY} ${save_path}
+    printf 'Shall I download the rfc in question? [y/n] '
+    read -q yesno
+    if [[ ${yesno} == 'y' ]] ; then
+        backend="${backend}-local"
+        file="${save_path}/rfc${QUERY}.txt"
+
+        zftp open ftp.rfc-editor.org "anonymous" "zsh_lookup@somewhere.tld"
+        zftp cd "/in-notes"
+        zftp binary
+        zftp get "rfc${QUERY}.txt" > ${file}
+        quit
+
+        LOOKUP_browser ${file}
+        return $?
+    fi
+fi
+
+LOOKUP_browser "ftp://ftp.rfc-editor.org/in-notes/rfc${QUERY}.txt"
+return $?

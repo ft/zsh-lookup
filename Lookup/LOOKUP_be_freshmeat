@@ -1,0 +1,26 @@
+### vim:ft=zsh:foldmethod=marker
+## freshmeat.net search backend for lookup
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+
+[[ -z ${lookup_complete} ]] && emulate -L zsh
+[[ -n ${lookup_describe} ]] &&
+    printf '%s' 'search freshmeat.net' &&
+    return 0
+
+local -a comp_args
+
+if [[ -n ${lookup_complete} ]] ; then
+    _message 'freshmeat search string'
+    return 0
+fi
+
+local QUERY
+
+QUERY="$*"
+if [[ -z ${QUERY} ]] ; then
+    printf 'usage: %s <query>\n' ${backend}
+    return 1
+fi
+
+LOOKUP_browser "http://freshmeat.net/search/?q=${QUERY// /+}&section=projects"
+return $?

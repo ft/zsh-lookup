@@ -1,0 +1,22 @@
+### vim:ft=zsh:foldmethod=marker
+## google search backend for lookup
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+
+[[ -z ${lookup_complete} ]] && emulate -L zsh
+[[ -n ${lookup_describe} ]] && printf '%s' 'google websearch' && return 0
+
+if [[ -n ${lookup_complete} ]] ; then
+    _message 'google query'
+    return 0
+fi
+
+local QUERY
+
+QUERY="$*"
+if [[ -z ${QUERY} ]] ; then
+    printf 'usage: google <query>\n'
+    return 1
+fi
+
+LOOKUP_browser "http://www.google.com/search?q=${QUERY:s/ /+/}"
+return $?

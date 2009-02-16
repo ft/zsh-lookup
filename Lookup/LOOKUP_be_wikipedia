@@ -1,0 +1,82 @@
+### vim:ft=zsh:foldmethod=marker
+## wikipedia backend for lookup
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+
+[[ -z ${lookup_complete} ]] && emulate -L zsh
+[[ -n ${lookup_describe} ]] &&
+    printf '%s' 'search wikipedia' &&
+    return 0
+
+local -a comp_args private_completions
+local -A known_locations
+
+known_locations=(
+    # yeah, there are more... a lot more.
+    ca      'Catalan'
+    cs      'Czech'
+    da      'Danish'
+    de      'German'
+    en      'English'
+    eo      'Esperanto'
+    es      'Spanish'
+    'fi'    'Finnish'
+    fr      'French'
+    hu      'Hungarian'
+    it      'Italian'
+    ja      'Japanese'
+    nl      'Dutch'
+    no      'Norwegian'
+    pt      'Portuguese'
+    pl      'Polish'
+    ro      'Romanian'
+    ru      'Russian'
+    sk      'Slovenian'
+    sv      'Swedish'
+    tr      'Turkish'
+    uk      'Ukrainian'
+)
+
+if [[ -n ${lookup_complete} ]] ; then
+
+    # TODO: This should go into the :completion:* namespace
+    zstyle -a ":lookup:backend:${backend}" my-completions private_completions
+
+    (( ${+functions[__lookup_wikipedia_known_locations]} )) ||
+    function __lookup_wikipedia_known_locations() {
+        local l
+        local -a ls
+
+        ls=(${private_completions})
+        for l in ${(k)known_locations}; do
+            ls+=("$l:${known_locations[$l]}")
+        done
+        _describe -t leo_langs 'known locations' ls
+    }
+
+    comp_args=(
+        '-l[choose a wikipedia flavour]:known locations:__lookup_wikipedia_known_locations'
+        '*:wikipedia search:true'
+    )
+
+    _arguments -s -w -A '-*' ${comp_args} && return 0
+    _message 'wikipedia search'
+    return 0
+fi
+
+local QUERY loc
+local -A opts
+
+zstyle -s ":lookup:backend:${backend}" default-locations loc || loc='en'
+
+zparseopts -A opts -D l:
+[[ -n ${opts[-l]} ]] && loc="${opts[-l]}"
+
+QUERY="$*"
+if [[ -z ${QUERY} ]] ; then
+    printf 'usage: %s [-l <arg>] <query>\n' ${backend}
+    printf '  -l <list>     limit search to a specific list\n'
+    return 1
+fi
+
+LOOKUP_browser "http://${loc}.wikipedia.org/w/wiki.phtml?search=${QUERY}&go=Go"
+return $?

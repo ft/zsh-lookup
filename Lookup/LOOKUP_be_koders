@@ -1,0 +1,126 @@
+### vim:ft=zsh:foldmethod=marker
+## koders.com source code search backend for lookup
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+
+[[ -z ${lookup_complete} ]] && emulate -L zsh
+[[ -n ${lookup_describe} ]] &&
+    printf '%s' 'source code search via koders.com' &&
+    return 0
+
+local -a comp_args known_langs known_licences
+
+known_langs=(
+#{{{
+    "ActionScript"
+    "Ada"
+    "ASP"
+    "ASP.NET"
+    "Assembler"
+    "C"
+    "C#"
+    "C++"
+    "Cobol"
+    "ColdFusion"
+    "Delphi"
+    "Eiffel"
+    "Erlang"
+    "Fortran"
+    "Java"
+    "JavaScript"
+    "JSP"
+    "Lisp"
+    "Lua"
+    "Mathematica"
+    "Matlab"
+    "ObjectiveC"
+    "Perl"
+    "PHP"
+    "Prolog"
+    "Python"
+    "Ruby"
+    "Scheme"
+    "Smalltalk"
+    "SQL"
+    "Tcl"
+    "VB"
+    "VB.NET"
+#}}}
+)
+
+known_licences=(
+#{{{
+    # TODO: descriptions would be nice...
+    "AFL"
+    "AL20"
+    "ASL"
+    "APSL"
+    "BSD"
+    "CPL"
+    "EPL10"
+    "GTPL"
+    "GPL"
+    "LGPL"
+    "IBMPL"
+    "IOSL"
+    "MSCL"
+    "MSPL"
+    "MSRL"
+    "MSVSSDK"
+    "MITD"
+    "MPL10"
+    "MPL11"
+    "NPL10"
+    "NPL11"
+    "OSL"
+    "PHPL"
+    "PSFL"
+    "SL"
+    "SPL"
+    "W3C"
+    "ZLL"
+    "ZPL"
+#}}}
+)
+
+if [[ -n ${lookup_complete} ]] ; then
+
+    (( ${+functions[__lookup_koders_langs]} )) ||
+    function __lookup_koders_langs() {
+        _describe -t koders_langs 'known languages' known_langs
+    }
+
+    (( ${+functions[__lookup_koders_licences]} )) ||
+    function __lookup_koders_licences() {
+        _describe -t koders_licences 'known licences' known_licences
+    }
+
+    comp_args=(
+        '-l[limit search to specific language]:language:__lookup_koders_langs'
+        '-L[limit search to specific licence]:licence:__lookup_koders_licences'
+        '*:source code search string:true'
+    )
+
+    _arguments -s -w -A '-*' ${comp_args} && return 0
+    _message 'source code search string'
+    return 0
+fi
+
+local QUERY lang licence
+
+zstyle -s ":lookup:backend:${backend}" default-lang    lang    || lang='*'
+zstyle -s ":lookup:backend:${backend}" default-licence licence || licence='*'
+
+zparseopts -A opts -D l: L:
+[[ -n ${opts[-l]} ]] && lang="${opts[-l]}"
+[[ -n ${opts[-L]} ]] && licence="${opts[-L]}"
+
+QUERY="$*"
+if [[ -z ${QUERY} ]] ; then
+    printf 'usage: %s <query>\n' ${backend}
+    printf '  -l <lang>     limit search to specific language\n'
+    printf '  -L <licence>  limit search to specific licence\n'
+    return 1
+fi
+
+LOOKUP_browser "http://koders.com/default.aspx?s=${QUERY// /+}&la=${lang}&li=${licence}"
+return $?

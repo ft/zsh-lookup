@@ -1,0 +1,49 @@
+### vim:ft=zsh:foldmethod=marker
+## usenet search backend for lookup via groups.google.com
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+
+[[ -z ${lookup_complete} ]] && emulate -L zsh
+[[ -n ${lookup_describe} ]] &&
+    printf '%s' 'usenet search' &&
+    return 0
+
+local -a comp_args
+
+if [[ -n ${lookup_complete} ]] ; then
+    comp_args=(
+        '-a[specify author]:author:'
+        '-m[search for message id]:message id:'
+        '*:usenet search string:true'
+    )
+
+    _arguments -s -w -A '-*' ${comp_args} && return 0
+    _message 'usenet search string'
+    return 0
+fi
+
+local QUERY mode author
+local -A opts
+
+mode='normal'
+zparseopts -A opts -D m a:
+for opt in ${(k)opts} ; do
+    [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
+done
+[[ ${opts[-m]} == 'yes' ]] && mode='msgid'
+[[ -n ${opts[-a]} ]] && author="&as_uauthors=${opts[-a]}"
+
+QUERY="$*"
+if [[ -z ${QUERY} ]] ; then
+    printf 'usage: %s [-m] [-a <arg>] <query>\n' ${backend}
+    printf '  -m            search for message id\n'
+    printf '  -a <author>   search for messages by <author>\n'
+    return 1
+fi
+
+if [[ ${mode} == 'msgid' ]] ; then
+    LOOKUP_browser "http://groups.google.com/groups?selm=${QUERY:s/ /+/}"
+    return $?
+fi
+
+LOOKUP_browser "http://groups.google.com/groups?q=${QUERY:s/ /+/}${author}"
+return $?

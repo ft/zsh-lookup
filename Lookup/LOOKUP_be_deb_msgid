@@ -1,0 +1,40 @@
+### vim:ft=zsh:foldmethod=marker
+## lists.debian.org message-id search backend for lookup
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+
+[[ -z ${lookup_complete} ]] && emulate -L zsh
+[[ -n ${lookup_describe} ]] &&
+    printf '%s' 'search lists.debian.org by message-ids' &&
+    return 0
+
+local -a comp_args
+
+if [[ -n ${lookup_complete} ]] ; then
+    comp_args=(
+        '-1[use /firsthit option]'
+        '*:message-id for l.d.o:true'
+    )
+
+    _arguments -s -w -A '-*' ${comp_args} && return 0
+    _message 'message-id for l.d.o'
+    return 0
+fi
+
+local QUERY end
+local -A opts
+
+zparseopts -A opts -D '1'
+for opt in ${(k)opts} ; do
+    [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
+done
+[[ ${opts[-1]} == 'yes' ]] && end='/firsthit' || end='/links'
+
+QUERY="$*"
+if [[ -z ${QUERY} ]] ; then
+    printf 'usage: %s [-1] <query>\n' ${backend}
+    printf '  -1    use the search'\''s first-hit option\n'
+    return 1
+fi
+
+LOOKUP_browser "http://lists.debian.org/msgid-search/${QUERY}${end}"
+return $?

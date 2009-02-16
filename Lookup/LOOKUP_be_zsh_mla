@@ -1,0 +1,68 @@
+### vim:ft=zsh:foldmethod=marker
+## zsh mla search backend for lookup
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+
+[[ -z ${lookup_complete} ]] && emulate -L zsh
+[[ -n ${lookup_describe} ]] &&
+    printf '%s' 'search interface for zsh'\''s ML archive' &&
+    return 0
+
+local -a comp_args
+
+if [[ -n ${lookup_complete} ]] ; then
+    comp_args=(
+        '-u[users x-seq search]:users\: X-Seq header number:'
+        '-w[workers x-seq search]:workers\: X-Seq header number:'
+        '-l[limit search to a specific list]:list name:(users workers)'
+        '-y[limit search to a specific year]:year:'
+        '*:zsh mla search:true'
+    )
+
+    _arguments -s -w -A '-*' ${comp_args} && return 0
+    _message 'zsh mla search'
+    return 0
+fi
+
+local QUERY list year mode
+local -A opts
+
+list='*'
+year='*'
+mode='normal'
+zparseopts -A opts -D u w l: y:
+for opt in ${(k)opts} ; do
+    [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
+done
+[[ ${opts[-u]} == 'yes' ]] && mode='users'
+[[ ${opts[-w]} == 'yes' ]] && mode='workers'
+[[ -n ${opts[-l]} ]] && list="${opts[-l]}"
+[[ -n ${opts[-y]} ]] && year="${opts[-y]}"
+
+QUERY="$*"
+if [[ -z ${QUERY} ]] ; then
+    printf 'usage: %s [-{u,w}] [-{l,y} <arg>] <query>\n' ${backend}
+    printf '  -u            search user archive by X-Seq: header\n'
+    printf '  -w            search workers archive by X-Seq: header\n'
+    printf '  -l <list>     limit search to a specific list\n'
+    printf '  -y <year>     limit search to a specific year\n'
+    printf '\nThe normal keyword search is done via google'\''s site: feature.\n'
+    printf 'In X-Seq modes, all non-digits are stripped from query.\n'
+    return 1
+fi
+
+case ${mode} in
+(users|workers)
+    QUERY="${QUERY//[^0-9]/}"
+    if [[ ${mode} == 'users' ]] ; then
+        LOOKUP_browser "http://www.zsh.org/cgi-bin/mla/redirect?USERNUMBER=${QUERY}"
+        return $?
+    else
+        LOOKUP_browser "http://www.zsh.org/cgi-bin/mla/redirect?WORKERNUMBER=${QUERY}"
+        return $?
+    fi
+    ;;
+(*)
+    LOOKUP_browser "http://www.google.com/search?q=site:www.zsh.org/mla/${list}/${year}/+${QUERY}"
+    return $?
+    ;;
+esac
