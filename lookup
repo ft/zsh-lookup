@@ -8,7 +8,6 @@
 ##
 
 # TODO: Backends should be selfdocumenting.
-# TODO: completions should be able to hide backends that got an alias, too.
 
 typeset -ga LOOKUP_backends
 typeset -gA LOOKUP_aliases

@@ -20,12 +20,20 @@ function _lookup_aliases() {
 (( ${+functions[_lookup_backends]} )) ||
 function _lookup_backends() {
     local be
+    local -i hidealiased
     local -a backends
     local -x lookup_describe
     lookup_describe='yes'
 
+    if zstyle -t ":completion:${curcontext}" hide-aliased-backends ; then
+        hidealiased=1
+    else
+        hidealiased=0
+    fi
+
     backends=()
     for be in ${LOOKUP_backends}; do
+        (( hidealiased > 0 )) && [[ -n ${(Mv)LOOKUP_aliases:#$be} ]] && continue
         backends+=("${be}:$(LOOKUP_be_${be})")
     done
 
