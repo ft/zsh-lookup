@@ -1,0 +1,71 @@
+### vim:ft=zsh:foldmethod=marker
+## letssingit.com search backend for lookup
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+
+[[ -z ${lookup_complete} ]] && emulate -L zsh
+
+[[ -n ${lookup_describe} ]] &&
+    printf '%s' 'search letssingit.com' &&
+    return 0
+
+local QUERY mode
+local -a comp_args
+local -A opts supported_modes
+
+supported_modes=(
+    artist  'search by artist'
+    album   'search by album'
+    song    'search by song name'
+    lyrics  'search contents of lyrics'
+)
+
+if [[ -n ${lookup_complete} ]] ; then
+    (( ${+functions[__lookup_letssingit_supported_modes]} )) ||
+    function __lookup_letssingit_supported_modes() {
+        local m
+        local -a ms
+
+        ms=()
+        for m in ${(k)supported_modes}; do
+            ms+=("$m:${supported_modes[$m]}")
+        done
+        _describe -t letssingit_modes 'supported search modes' ms
+    }
+
+    comp_args=(
+        '-m[set search mode]:supported search modes:__lookup_letssingit_supported_modes'
+        '*:letssingit.com query:true'
+    )
+
+    _arguments -s -w -A '-*' ${comp_args} && return 0
+    _message 'letssingit.com query'
+
+    return 0
+fi
+
+zparseopts -A opts -D 'm:'
+mode=${opts[-m]}
+
+if [[ -z ${mode} ]] ; then
+    zstyle -s ":lookup:${lsys}:${backend}" default-mode mode || mode='artist'
+fi
+
+QUERY="$*"
+if [[ -z ${(Mk)supported_modes:#$mode} ]] ; then
+    printf 'Unknown search mode: '\''%s'\''.\n\n' ${mode}
+    QUERY=''
+fi
+if [[ -z ${QUERY} ]] ; then
+    printf 'usage: %s [-s mode] <query>\n' ${backend}
+    printf '  -l <mode>     specify search mode\n'
+    printf '\nAvailable modes are::\n'
+    for mode in ${(kon)supported_modes} ; do
+        printf '%8s   - %s\n' ${mode} ${supported_modes[$mode]}
+    done
+    return 1
+fi
+
+QUERY="$(LOOKUP_encode ${QUERY})"
+
+LOOKUP_browser "http://search.letssingit.com/cgi-exe/am.cgi?a=search_quick&l=${mode}&s=${QUERY}"
+return $?
