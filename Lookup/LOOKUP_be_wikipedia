@@ -38,8 +38,7 @@ known_locations=(
 
 if [[ -n ${lookup_complete} ]] ; then
 
-    # TODO: This should go into the :completion:* namespace
-    zstyle -a ":lookup:${lsys}:${backend}" my-completions private_completions
+    zstyle -a ":completion:${curcontext}" my-completions private_completions
 
     (( ${+functions[__lookup_wikipedia_known_locations]} )) ||
     function __lookup_wikipedia_known_locations() {
