@@ -34,7 +34,9 @@ dir="$1"
 for file in ${files} ; do
     [ -e "${dir}/${file}" ] && doit rm -f "${dir}/${file}"
 done
-doit rm -Rf "${dir}/${subdirs}"
+for subdir in ${subdirs} ; do
+    [ -d "${dir}/${subdir}" ] && doit rm -Rf "${dir}/${subdir}"
+done
 
 doit cp ${files} "${dir}"
 doit cp -R ${subdirs} "${dir}"
