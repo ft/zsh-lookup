@@ -4,6 +4,20 @@
 emulate -L zsh
 setopt extendedglob
 local input
+local -A opts
 
-input=( ${(s::)1} )
+zparseopts -A opts -D s
+for opt in ${(k)opts} ; do
+    [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
+done
+
+if [[ ${opts[-s]} == 'yes' ]] ; then
+    local ws=$'\t '
+    input=${${1##[$ws]#}%%[$ws]#}
+    input=${input//[$ws]##/+}
+else
+    input="$1"
+fi
+
+input=( ${(s::)input} )
 printf '%s' ${(j::)input/(#b)([^A-Za-z0-9_.!~*\'\(\)+-])/%${(l:2::0:)$(([##16]#match))}}
