@@ -20,8 +20,9 @@ if [[ -n ${lookup_complete} ]] ; then
     return 0
 fi
 
-local QUERY mode
+local mode
 local -A opts
+local -x QUERY
 
 mode='id'
 zparseopts -A opts -D p
@@ -40,11 +41,12 @@ if [[ -z ${QUERY} ]] ; then
 fi
 
 if [[ ${mode} == 'id' ]] ; then
-    QUERY="$(LOOKUP_encode ${QUERY//#/})"
+    QUERY=${QUERY//#/}
+    LOOKUP_encode -q
     LOOKUP_browser "http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=${QUERY}"
     return $?
 else
-    QUERY="$(LOOKUP_encode ${QUERY})"
+    LOOKUP_encode -q
     LOOKUP_browser "http://bugs.debian.org/${QUERY}"
     return $?
 fi

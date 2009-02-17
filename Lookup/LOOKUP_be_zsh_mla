@@ -23,8 +23,9 @@ if [[ -n ${lookup_complete} ]] ; then
     return 0
 fi
 
-local QUERY list year mode
+local list year mode
 local -A opts
+local -x QUERY
 
 list='*'
 year='*'
@@ -62,7 +63,7 @@ case ${mode} in
     fi
     ;;
 (*)
-    QUERY="$(LOOKUP_encode -s ${QUERY})"
+    LOOKUP_encode -s -q
     LOOKUP_browser "http://www.google.com/search?q=site:www.zsh.org/mla/${list}/${year}/+${QUERY}"
     return $?
     ;;

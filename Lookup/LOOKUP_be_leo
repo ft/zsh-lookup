@@ -22,9 +22,13 @@
     return 0
 
 # declare variables. Assume warncreateglobal is enabled.
-local QUERY lang
+local lang
 local -a comp_args
 local -A opts supported_langs interface_lang
+
+# For the actual query string, always use QUERY and make it 'local -x'!
+# Parts of the lookup system depend on $QUERY to be declared like this!
+local -x QUERY
 
 supported_langs=(
     ende    'english german'
@@ -104,7 +108,11 @@ if [[ -z ${QUERY} ]] ; then
 fi
 
 # Use LOOKUP_encode() for proper url encoding of the QUERY.
-QUERY="$(LOOKUP_encode ${QUERY})"
+# Since, QUERY is the most common use case of LOOKUP_encode, it has
+# a special option to handle that variable.
+# For other variables you want to encode, do:
+#   foo="$(LOOKUP_encode ${foo})"
+LOOKUP_encode -q
 
 # Use our browser wrapper to open the URI, it'll handle everything just right.
 LOOKUP_browser "http://dict.leo.org?lang=${interface_lang}&lp=${lang}&search=${QUERY}"

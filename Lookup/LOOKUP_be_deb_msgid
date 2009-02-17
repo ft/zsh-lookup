@@ -20,8 +20,9 @@ if [[ -n ${lookup_complete} ]] ; then
     return 0
 fi
 
-local QUERY end
+local end
 local -A opts
+local -x QUERY
 
 zparseopts -A opts -D '1'
 for opt in ${(k)opts} ; do
@@ -36,6 +37,6 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
-QUERY="$(LOOKUP_encode ${QUERY})"
+LOOKUP_encode -q
 LOOKUP_browser "http://lists.debian.org/msgid-search/${QUERY}${end}"
 return $?

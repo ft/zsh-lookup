@@ -15,7 +15,7 @@ if [[ -n ${lookup_complete} ]] ; then
     return 0
 fi
 
-local QUERY
+local -x QUERY
 
 QUERY="$*"
 if [[ -z ${QUERY} ]] ; then
@@ -23,6 +23,6 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
-QUERY="$(LOOKUP_encode ${QUERY})"
+LOOKUP_encode -q
 LOOKUP_browser "http://patch-tracking.debian.net/package/${QUERY}"
 return $?

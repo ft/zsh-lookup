@@ -62,8 +62,9 @@ if [[ -n ${lookup_complete} ]] ; then
     return 0
 fi
 
-local QUERY loc
+local loc
 local -A opts
+local -x QUERY
 
 zstyle -s ":lookup:${lsys}:${backend}" default-locations loc || loc='en'
 
@@ -77,6 +78,6 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
-QUERY="$(LOOKUP_encode ${QUERY})"
+LOOKUP_encode -q
 LOOKUP_browser "http://${loc}.wikipedia.org/w/wiki.phtml?search=${QUERY}&go=Go"
 return $?

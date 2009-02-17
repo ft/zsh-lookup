@@ -105,7 +105,8 @@ if [[ -n ${lookup_complete} ]] ; then
     return 0
 fi
 
-local QUERY lang licence
+local lang licence
+local -x QUERY
 
 zstyle -s ":lookup:${lsys}:${backend}" default-lang    lang    || lang='*'
 zstyle -s ":lookup:${lsys}:${backend}" default-licence licence || licence='*'
@@ -122,6 +123,6 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
-QUERY="$(LOOKUP_encode -s ${QUERY})"
+LOOKUP_encode -s -q
 LOOKUP_browser "http://koders.com/default.aspx?s=${QUERY}&la=${lang}&li=${licence}"
 return $?

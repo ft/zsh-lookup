@@ -21,8 +21,9 @@ if [[ -n ${lookup_complete} ]] ; then
     return 0
 fi
 
-local QUERY mode author
+local mode author
 local -A opts
+local -x QUERY
 
 mode='normal'
 zparseopts -A opts -D m a:
@@ -40,7 +41,7 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
-QUERY="$(LOOKUP_encode -s ${QUERY})"
+LOOKUP_encode -s -q
 if [[ ${mode} == 'msgid' ]] ; then
     LOOKUP_browser "http://groups.google.com/groups?selm=${QUERY}"
     return $?

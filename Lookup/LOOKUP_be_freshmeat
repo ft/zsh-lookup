@@ -14,7 +14,7 @@ if [[ -n ${lookup_complete} ]] ; then
     return 0
 fi
 
-local QUERY
+local -x QUERY
 
 QUERY="$*"
 if [[ -z ${QUERY} ]] ; then
@@ -22,6 +22,6 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
-QUERY="$(LOOKUP_encode -s ${QUERY})"
+LOOKUP_encode -s -q
 LOOKUP_browser "http://freshmeat.net/search/?q=${QUERY}&section=projects"
 return $?

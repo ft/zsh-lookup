@@ -3,13 +3,19 @@
 
 emulate -L zsh
 setopt extendedglob
-local input
+local input output
 local -A opts
 
-zparseopts -A opts -D s
+zparseopts -A opts -D s q
 for opt in ${(k)opts} ; do
     [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
 done
+
+if [[ ${opts[-q]} == 'yes' ]] ; then
+    # -q: QUERY is declared 'local -x QUERY' in backends.
+    #     That means, it gets handed down to us. Apply our filters to it.
+    set -- "${QUERY}"
+fi
 
 if [[ ${opts[-s]} == 'yes' ]] ; then
     local ws=$'\t '
@@ -20,4 +26,9 @@ else
 fi
 
 input=( ${(s::)input} )
-printf '%s' ${(j::)input/(#b)([^A-Za-z0-9_.!~*\'\(\)+-])/%${(l:2::0:)$(([##16]#match))}}
+output=${(j::)input/(#b)([^A-Za-z0-9_.!~*\'\(\)+-])/%${(l:2::0:)$(([##16]#match))}}
+if [[ ${opts[-q]} == 'yes' ]] ; then
+    QUERY=${output}
+else
+    printf '%s' ${output}
+fi
