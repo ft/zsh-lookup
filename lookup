@@ -26,8 +26,8 @@ function lookup() {
     local -ix lookup_remote lookup_printout
 
     if [[ -z $1 ]] ; then
-        printf 'usage: lookup [-{s,a,d,l,L,P,R}] <backend> OPTION(s)...\n'
-        printf '    -s  (re)initialize backend list\n\n'
+        printf 'usage: lookup [-{i,a,d,l,L,P,R}] <backend> OPTION(s)...\n'
+        printf '    -i  (re)initialize lookup\n\n'
         printf '    -a  add a backend alias\n'
         printf '    -d  remove an alias for a backend\n\n'
         printf '    -l  list available backends\n'
@@ -39,7 +39,7 @@ function lookup() {
 
     lookup_remote=0
     lookup_printout=0
-    zparseopts -A opts -D a: d: l s L P R
+    zparseopts -A opts -D a: d: i l L P R
     if [[ $1 == -* ]] ; then
         printf 'Unknown option: %s\n' "$1"
         return 1
@@ -49,11 +49,12 @@ function lookup() {
     done
 
     if [[ -n ${opts[-l]} ]] ; then
-        # list backends
+        printf 'Available backends:\n\n'
         lookup_describe="yes"
         for backend in ${LOOKUP_backends} ; do
             printf '%16s - %s\n' ${backend} "$(LOOKUP_be_${backend})"
         done
+        printf '\n'
         return 0
     fi
 
@@ -70,8 +71,12 @@ function lookup() {
         return 0
     fi
 
-    if [[ -n ${opts[-s]} ]] ; then
+    if [[ -n ${opts[-i]} ]] ; then
+        local f
+        local -a fcts
+
         LOOKUP_backends=()
+        fcts=(LOOKUP_browser)
 
         for file in ${^fpath}/LOOKUP_be_*~*(\~|.zwc)(N.) ; do
             file=${file:t}
@@ -81,6 +86,10 @@ function lookup() {
             [[ -n ${(M)LOOKUP_backends:#${backend}} ]] && continue
             LOOKUP_backends+=(${backend})
             autoload -Uz LOOKUP_be_${backend}
+        done
+
+        for f in ${fcts} ; do
+            (( ${+functions[$f]} )) || autoload -Uz $f
         done
         return 0
     fi
@@ -130,5 +139,5 @@ LOOKUP_encode() {
     printf '%s' ${(j::)input/(#b)([^A-Za-z0-9_.!~*\'\(\)+-])/%${(l:2::0:)$(([##16]#match))}}
 }
 
-# initialize backend list
-lookup -s
+# initialize the system
+lookup -i
