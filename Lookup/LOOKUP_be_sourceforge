@@ -2,7 +2,6 @@
 ## sf.net search backend for lookup
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 
-[[ -z ${lookup_complete} ]] && emulate -L zsh
 [[ -n ${lookup_describe} ]] &&
     printf '%s' 'search sourceforge.net' &&
     return 0

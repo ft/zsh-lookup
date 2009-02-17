@@ -2,7 +2,6 @@
 ## patch-tracking.debian.net backend for lookup
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 
-[[ -z ${lookup_complete} ]] && emulate -L zsh
 [[ -n ${lookup_describe} ]] &&
     printf '%s' 'check patch information of debian packages' &&
     return 0

@@ -10,10 +10,6 @@
 ## to follow the general style of this one.
 ##
 
-# Use 'emulate -L zsh' to create a known environment.
-# Use *this* test! It will handle our completion setup.
-[[ -z ${lookup_complete} ]] && emulate -L zsh
-
 # This check is required and it should be the first thing the backend does.
 # If $lookup_describe is not empty, only print a short description
 # of what the backend does. Without a newline at the end!

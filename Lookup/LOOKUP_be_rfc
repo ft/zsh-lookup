@@ -6,7 +6,6 @@
 #   This is currently just a real lookup.
 #   rfc-editor.com supports searching, too. ...would be nice...
 
-[[ -z ${lookup_complete} ]] && emulate -L zsh
 [[ -n ${lookup_describe} ]] &&
     printf '%s' 'RFC lookup' &&
     return 0

@@ -2,7 +2,6 @@
 ## usenet search backend for lookup via groups.google.com
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 
-[[ -z ${lookup_complete} ]] && emulate -L zsh
 [[ -n ${lookup_describe} ]] &&
     printf '%s' 'usenet search' &&
     return 0
