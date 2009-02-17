@@ -22,5 +22,6 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
-LOOKUP_browser "http://freshmeat.net/search/?q=${QUERY// /+}&section=projects"
+QUERY="$(LOOKUP_encode -s ${QUERY})"
+LOOKUP_browser "http://freshmeat.net/search/?q=${QUERY}&section=projects"
 return $?

@@ -18,5 +18,6 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
-LOOKUP_browser "http://www.google.com/search?q=${QUERY:s/ /+/}"
+QUERY="$(LOOKUP_encode -s ${QUERY})"
+LOOKUP_browser "http://www.google.com/search?q=${QUERY}"
 return $?

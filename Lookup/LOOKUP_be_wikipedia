@@ -78,5 +78,6 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
+QUERY="$(LOOKUP_encode ${QUERY})"
 LOOKUP_browser "http://${loc}.wikipedia.org/w/wiki.phtml?search=${QUERY}&go=Go"
 return $?

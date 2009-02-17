@@ -23,5 +23,6 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
-LOOKUP_browser "http://patch-tracking.debian.net/package/${QUERY// /%20}"
+QUERY="$(LOOKUP_encode ${QUERY})"
+LOOKUP_browser "http://patch-tracking.debian.net/package/${QUERY}"
 return $?

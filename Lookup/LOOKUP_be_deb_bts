@@ -40,9 +40,11 @@ if [[ -z ${QUERY} ]] ; then
 fi
 
 if [[ ${mode} == 'id' ]] ; then
-    LOOKUP_browser "http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=${QUERY//\#/}"
+    QUERY="$(LOOKUP_encode ${QUERY//#/})"
+    LOOKUP_browser "http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=${QUERY}"
     return $?
 else
-    LOOKUP_browser "http://bugs.debian.org/${QUERY// /%20}"
+    QUERY="$(LOOKUP_encode ${QUERY})"
+    LOOKUP_browser "http://bugs.debian.org/${QUERY}"
     return $?
 fi

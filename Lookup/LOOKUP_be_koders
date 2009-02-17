@@ -122,5 +122,6 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
-LOOKUP_browser "http://koders.com/default.aspx?s=${QUERY// /+}&la=${lang}&li=${licence}"
+QUERY="$(LOOKUP_encode -s ${QUERY})"
+LOOKUP_browser "http://koders.com/default.aspx?s=${QUERY}&la=${lang}&li=${licence}"
 return $?

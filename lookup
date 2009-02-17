@@ -7,7 +7,6 @@
 ## subdirectory are distributed under the same licence as zsh itself (BSD-like).
 ##
 
-# TODO: LOOKUP_encode() should be used throughout the system.
 # TODO: Backends should be selfdocumenting.
 # TODO: completions should be able to hide backends that got an alias, too.
 

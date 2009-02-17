@@ -103,6 +103,9 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
+# Use LOOKUP_encode() for proper url encoding of the QUERY.
+QUERY="$(LOOKUP_encode ${QUERY})"
+
 # Use our browser wrapper to open the URI, it'll handle everything just right.
 LOOKUP_browser "http://dict.leo.org?lang=${interface_lang}&lp=${lang}&search=${QUERY}"
 

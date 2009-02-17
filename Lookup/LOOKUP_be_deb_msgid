@@ -36,5 +36,6 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
+QUERY="$(LOOKUP_encode ${QUERY})"
 LOOKUP_browser "http://lists.debian.org/msgid-search/${QUERY}${end}"
 return $?

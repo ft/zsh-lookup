@@ -22,5 +22,6 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
-LOOKUP_browser "http://sourceforge.net/search/?words=${QUERY// /+}&type_of_search=soft"
+QUERY="$(LOOKUP_encode -s ${QUERY})"
+LOOKUP_browser "http://sourceforge.net/search/?words=${QUERY}&type_of_search=soft"
 return $?

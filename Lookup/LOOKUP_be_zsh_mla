@@ -62,6 +62,7 @@ case ${mode} in
     fi
     ;;
 (*)
+    QUERY="$(LOOKUP_encode -s ${QUERY})"
     LOOKUP_browser "http://www.google.com/search?q=site:www.zsh.org/mla/${list}/${year}/+${QUERY}"
     return $?
     ;;

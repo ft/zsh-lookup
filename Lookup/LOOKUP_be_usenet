@@ -40,10 +40,11 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
+QUERY="$(LOOKUP_encode -s ${QUERY})"
 if [[ ${mode} == 'msgid' ]] ; then
-    LOOKUP_browser "http://groups.google.com/groups?selm=${QUERY:s/ /+/}"
+    LOOKUP_browser "http://groups.google.com/groups?selm=${QUERY}"
     return $?
 fi
 
-LOOKUP_browser "http://groups.google.com/groups?q=${QUERY:s/ /+/}${author}"
+LOOKUP_browser "http://groups.google.com/groups?q=${QUERY}${author}"
 return $?

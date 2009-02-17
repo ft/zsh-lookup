@@ -22,5 +22,6 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
-LOOKUP_browser "http://www.filewatcher.com/_/?q=${QUERY// /+}"
+QUERY="$(LOOKUP_encode -s ${QUERY})"
+LOOKUP_browser "http://www.filewatcher.com/_/?q=${QUERY}"
 return $?
