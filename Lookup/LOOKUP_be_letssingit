@@ -39,7 +39,6 @@ if [[ -n ${lookup_complete} ]] ; then
 
     _arguments -s -w -A '-*' ${comp_args} && return 0
     _message 'letssingit.com query'
-
     return 0
 fi
 
