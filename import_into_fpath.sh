@@ -1,10 +1,10 @@
 #!/bin/sh
 
 files="_lookup lookup"
-subdir="Lookup"
+subdirs="Lookup"
 
 if [ -z "$1" ] ; then
-    printf 'usage: %s <dir>\n' $0
+    printf 'usage: %s <dir>\n' "$0"
     printf '<dir> should be a directory in your $fpath.\n'
     exit 1
 fi
@@ -15,7 +15,7 @@ if [ ! -e "$1" ] || [ ! -r "$1" ] || [ ! -w "$1" ] || [ ! -x "$1" ] ; then
 fi
 
 fail=0
-for file in .git ${files} ${subdir} ; do
+for file in .git ${files} ${subdirs} ; do
     [ ! -e "${file}" ] && fail=1 && break
 done
 
@@ -34,7 +34,7 @@ dir="$1"
 for file in ${files} ; do
     [ -e "${dir}/${file}" ] && doit rm -f "${dir}/${file}"
 done
-doit rm -Rf "${dir}/${subdir}"
+doit rm -Rf "${dir}/${subdirs}"
 
-doit cp ${files} ${dir}
-doit cp -R ${subdir} ${dir}
+doit cp ${files} "${dir}"
+doit cp -R ${subdirs} "${dir}"
