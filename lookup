@@ -85,7 +85,8 @@ function lookup() {
 
             [[ -n ${(M)LOOKUP_backends:#${backend}} ]] && continue
             LOOKUP_backends+=(${backend})
-            autoload -Uz LOOKUP_be_${backend}
+            (( ${+functions[LOOKUP_be_$backend]} )) ||
+                autoload -Uz LOOKUP_be_${backend}
         done
 
         for f in ${fcts} ; do
