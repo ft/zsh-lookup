@@ -15,6 +15,7 @@ typeset -gA LOOKUP_aliases
 function lookup() {
     emulate -L zsh
     setopt extendedglob
+    setopt warncreateglobal
 
     local file opt
     local -a opts
