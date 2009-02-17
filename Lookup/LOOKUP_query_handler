@@ -16,7 +16,7 @@ for qh in ${qhs} ; do
         printf 'Hit any key to continue...\n'
         read -k 1
     else
-        if [[ -z ${lookup_qh_arg} ]] ; then
+        if [[ ${lookup_qh_arg-wasunset} == 'wasunset' ]] ; then
             LOOKUP_qh_${qh}
         else
             LOOKUP_qh_${qh} ${lookup_qh_arg}

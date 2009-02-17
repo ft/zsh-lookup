@@ -26,7 +26,6 @@ function lookup() {
     local -Ax lookup_communicate
 
     lsys='-main-'
-    lookup_qh_arg=''
     lookup_use_qh=0
     lookup_remote=0
     lookup_printout=0
