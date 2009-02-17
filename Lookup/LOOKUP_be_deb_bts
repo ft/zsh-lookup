@@ -32,6 +32,7 @@ done
 [[ ${opts[-p]} == 'yes' ]] && mode='package'
 
 QUERY="$*"
+LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
     printf 'usage: %s <query>\n' ${backend}
     printf '  -p    go to the bts page of a given package\n'

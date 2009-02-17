@@ -1,0 +1,23 @@
+### vim:ft=zsh:foldmethod=marker
+## run query handlers
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+
+local olsys
+local -a qhs
+
+(( lookup_use_qh == 0 )) && return 0
+zstyle -a ":lookup:${lsys}:${backend}" query-handlers qhs || return 0
+
+olsys=${lsys}
+lsys='-queryhandler-'
+for qh in ${qhs} ; do
+    if (( ${+functions[LOOKUP_qh_$qh]} == 0 )) ; then
+        printf 'query-handler %s requires this function: %s\n' "${qa}" "LOOKUP_qh_${qh}"
+        printf 'Hit any key to continue...\n'
+        read -k 1
+    else
+        LOOKUP_qh_${qh} ${lookup_qh_arg}
+    fi
+done
+lsys=${olsys}
+return 0

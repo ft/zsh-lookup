@@ -90,6 +90,13 @@ zstyle -s ":lookup:-backend-:${backend}" interface-lang interface_lang || interf
 # If applicable, use the remaining arguments as QUERY.
 QUERY="$*"
 
+# Call LOOKUP_query_handler() to support the -Q and -q options of lookup.
+# If you want to support return values from handlers, use the
+# $lookup_communicate[] hash, which is meant to be used for that. It can
+# also be used to get additional information into the handler.
+# See LOOKUP_be_letssingit for an example.
+LOOKUP_query_handler
+
 # Do appropriate error checking and give usage information
 # if the query is empty.
 if [[ -z ${(Mk)supported_langs:#$lang} ]] ; then

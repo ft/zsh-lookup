@@ -47,6 +47,7 @@ done
 [[ ${opts[-w]} == 'yes' ]] && justwatch=1
 
 QUERY="$*"
+LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
     printf 'usage: %s [-w] <query>\n' ${backend}
     printf '  -d    ask to download RFC before reading\n'

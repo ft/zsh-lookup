@@ -72,6 +72,7 @@ zparseopts -A opts -D l:
 [[ -n ${opts[-l]} ]] && loc="${opts[-l]}"
 
 QUERY="$*"
+LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
     printf 'usage: %s [-l <arg>] <query>\n' ${backend}
     printf '  -l <list>     limit search to a specific list\n'

@@ -13,6 +13,7 @@ fi
 local -x QUERY
 
 QUERY="$*"
+LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
     printf 'usage: google <query>\n'
     return 1

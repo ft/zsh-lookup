@@ -34,6 +34,7 @@ done
 [[ -n ${opts[-a]} ]] && author="&as_uauthors=${opts[-a]}"
 
 QUERY="$*"
+LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
     printf 'usage: %s [-m] [-a <arg>] <query>\n' ${backend}
     printf '  -m            search for message id\n'

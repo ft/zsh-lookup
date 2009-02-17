@@ -17,6 +17,7 @@ fi
 local -x QUERY
 
 QUERY="$*"
+LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
     printf 'usage: %s <query>\n' ${backend}
     return 1

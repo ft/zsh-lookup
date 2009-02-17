@@ -51,6 +51,8 @@ if [[ -z ${mode} ]] ; then
 fi
 
 QUERY="$*"
+lookup_communicate[mode]=${mode}
+LOOKUP_query_handler
 if [[ -z ${(Mk)supported_modes:#$mode} ]] ; then
     printf 'Unknown search mode: '\''%s'\''.\n\n' ${mode}
     QUERY=''

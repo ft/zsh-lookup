@@ -116,6 +116,7 @@ zparseopts -A opts -D l: L:
 [[ -n ${opts[-L]} ]] && licence="${opts[-L]}"
 
 QUERY="$*"
+LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
     printf 'usage: %s <query>\n' ${backend}
     printf '  -l <lang>     limit search to specific language\n'

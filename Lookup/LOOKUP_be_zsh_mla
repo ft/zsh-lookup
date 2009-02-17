@@ -40,6 +40,7 @@ done
 [[ -n ${opts[-y]} ]] && year="${opts[-y]}"
 
 QUERY="$*"
+LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
     printf 'usage: %s [-{u,w}] [-{l,y} <arg>] <query>\n' ${backend}
     printf '  -u            search user archive by X-Seq: header\n'
