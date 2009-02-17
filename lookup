@@ -21,7 +21,7 @@ function lookup() {
     local -a opts
     local -A lu_aliases
 
-    local -x backend lookup_describe
+    local -x backend lookup_describe lsys
     local -ix lookup_remote lookup_printout
 
     if [[ -z $1 ]] ; then
@@ -36,6 +36,7 @@ function lookup() {
         return 0
     fi
 
+    lsys='-main-'
     lookup_remote=0
     lookup_printout=0
     zparseopts -A opts -D a: d: i l L P R
@@ -122,6 +123,7 @@ function lookup() {
 
     shift
 
+    lsys='-backend-'
     LOOKUP_be_${backend} "$@"
     return $?
 }

@@ -107,8 +107,8 @@ fi
 
 local QUERY lang licence
 
-zstyle -s ":lookup:backend:${backend}" default-lang    lang    || lang='*'
-zstyle -s ":lookup:backend:${backend}" default-licence licence || licence='*'
+zstyle -s ":lookup:${lsys}:${backend}" default-lang    lang    || lang='*'
+zstyle -s ":lookup:${lsys}:${backend}" default-licence licence || licence='*'
 
 zparseopts -A opts -D l: L:
 [[ -n ${opts[-l]} ]] && lang="${opts[-l]}"

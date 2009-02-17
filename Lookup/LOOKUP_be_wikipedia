@@ -39,7 +39,7 @@ known_locations=(
 if [[ -n ${lookup_complete} ]] ; then
 
     # TODO: This should go into the :completion:* namespace
-    zstyle -a ":lookup:backend:${backend}" my-completions private_completions
+    zstyle -a ":lookup:${lsys}:${backend}" my-completions private_completions
 
     (( ${+functions[__lookup_wikipedia_known_locations]} )) ||
     function __lookup_wikipedia_known_locations() {
@@ -66,7 +66,7 @@ fi
 local QUERY loc
 local -A opts
 
-zstyle -s ":lookup:backend:${backend}" default-locations loc || loc='en'
+zstyle -s ":lookup:${lsys}:${backend}" default-locations loc || loc='en'
 
 zparseopts -A opts -D l:
 [[ -n ${opts[-l]} ]] && loc="${opts[-l]}"

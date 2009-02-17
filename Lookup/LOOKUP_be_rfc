@@ -29,10 +29,10 @@ local QUERY dir file save_path search_path yesno
 local -i justwatch
 local -A opts
 
-zstyle -s ":lookup:backend:${backend}" save-path   save_path
-zstyle -a ":lookup:backend:${backend}" search-path search_path
+zstyle -s ":lookup:${lsys}:${backend}" save-path   save_path
+zstyle -a ":lookup:${lsys}:${backend}" search-path search_path
 
-if zstyle -t ":lookup:backend:${backend}" download ; then
+if zstyle -t ":lookup:${lsys}:${backend}" download ; then
     justwatch='0'
 else
     justwatch='1'
