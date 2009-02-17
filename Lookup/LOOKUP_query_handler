@@ -16,7 +16,11 @@ for qh in ${qhs} ; do
         printf 'Hit any key to continue...\n'
         read -k 1
     else
-        LOOKUP_qh_${qh} ${lookup_qh_arg}
+        if [[ -z ${lookup_qh_arg} ]] ; then
+            LOOKUP_qh_${qh}
+        else
+            LOOKUP_qh_${qh} ${lookup_qh_arg}
+        fi
     fi
 done
 lsys=${olsys}
