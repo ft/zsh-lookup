@@ -3,8 +3,8 @@
 ## zsh function that looks up an argument in various webservices.
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 ##
-## This file, LOOKUP_browser and all backends in the Lookup/ subdirectory
-## are distributed under the same licence as zsh itself (BSD-like).
+## This file, LOOKUP_browser, LOOKUP_encode and all backends in the Lookup/
+## subdirectory are distributed under the same licence as zsh itself (BSD-like).
 ##
 
 # TODO: LOOKUP_encode() should be used throughout the system.
@@ -76,7 +76,7 @@ function lookup() {
         local -a fcts
 
         LOOKUP_backends=()
-        fcts=(LOOKUP_browser)
+        fcts=(LOOKUP_browser LOOKUP_browser)
 
         for file in ${^fpath}/LOOKUP_be_*~*(\~|.zwc)(N.) ; do
             file=${file:t}
@@ -128,15 +128,6 @@ function lookup() {
 
 function lu() {
     lookup "$@"
-}
-
-LOOKUP_encode() {
-    emulate -L zsh
-    setopt extendedglob
-    local input
-
-    input=( ${(s::)1} )
-    printf '%s' ${(j::)input/(#b)([^A-Za-z0-9_.!~*\'\(\)+-])/%${(l:2::0:)$(([##16]#match))}}
 }
 
 # initialize the system

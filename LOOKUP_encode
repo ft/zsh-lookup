@@ -1,0 +1,9 @@
+### vim:ft=zsh:foldmethod=marker
+## url encoding for lookup queries, etc.
+
+emulate -L zsh
+setopt extendedglob
+local input
+
+input=( ${(s::)1} )
+printf '%s' ${(j::)input/(#b)([^A-Za-z0-9_.!~*\'\(\)+-])/%${(l:2::0:)$(([##16]#match))}}
