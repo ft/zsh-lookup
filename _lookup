@@ -55,8 +55,13 @@ local -ix lookup_complete
 
 lookup_complete=1
 args=(
+    '-a[add a backend alias]:alias definition:'
+    '-d[remove backand alias]:alias name:_lookup_aliases'
+    '-i[(re)initialize lookup]:'
     '-l[list available backends]:'
-    '-s[(re)initialize backend list]:'
+    '-L[list defined backend aliases]:'
+    '-Q[let a handler create the QUERY string]'
+    '-q[let a handler create the QUERY string, with arg]:argument for query handler:'
     '-P[print which browser command would be used]'
     '-R[send url to remote browser]'
     '*:: :->be_or_options'
