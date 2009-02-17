@@ -1,6 +1,6 @@
 #!/bin/sh
 
-files="LOOKUP_browser LOOKUP_encode _lookup lookup"
+files="_lookup lookup"
 subdir="Lookup"
 
 if [ -z "$1" ] ; then
