@@ -26,9 +26,12 @@ function lookup() {
     local -ix lookup_remote lookup_printout
 
     if [[ -z $1 ]] ; then
-        printf 'usage: lookup [-{l,s,R,P}] <backend> OPTION(s)...\n'
+        printf 'usage: lookup [-{s,a,d,l,L,P,R}] <backend> OPTION(s)...\n'
+        printf '    -s  (re)initialize backend list\n\n'
+        printf '    -a  add a backend alias\n'
+        printf '    -d  remove an alias for a backend\n\n'
         printf '    -l  list available backends\n'
-        printf '    -s  (re)initialize backend list\n'
+        printf '    -L  list defined backend aliases\n\n'
         printf '    -P  print which browser command would be used\n'
         printf '    -R  send url to remote browser\n'
         return 0
@@ -36,7 +39,7 @@ function lookup() {
 
     lookup_remote=0
     lookup_printout=0
-    zparseopts -A opts -D l s P R
+    zparseopts -A opts -D a: d: l s L P R
     if [[ $1 == -* ]] ; then
         printf 'Unknown option: %s\n' "$1"
         return 1
@@ -53,8 +56,21 @@ function lookup() {
         done
         return 0
     fi
+
+    if [[ -n ${opts[-L]} ]] ; then
+        if (( ${#LOOKUP_aliases} == 0 )) ; then
+            printf 'lookup: No aliases defined.\n'
+            return 0
+        fi
+        printf 'Defined backend aliases:\n\n'
+        for al in ${(k)LOOKUP_aliases}; do
+            printf '%16s=%s\n' ${al} ${LOOKUP_aliases[$al]}
+        done
+        printf '\n'
+        return 0
+    fi
+
     if [[ -n ${opts[-s]} ]] ; then
-        # reread backends list
         LOOKUP_backends=()
 
         for file in ${^fpath}/LOOKUP_be_*~*(\~|.zwc)(N.) ; do
@@ -68,6 +84,23 @@ function lookup() {
         done
         return 0
     fi
+
+    if [[ -n ${opts[-a]} ]] ; then
+        local al val
+
+        : ${${opts[-a]}/(#b)(*)=(*)}
+        al="${match[1]}"
+        val="${match[2]}"
+
+        LOOKUP_aliases[$al]="${val}"
+        return 0
+    fi
+
+    if [[ -n ${opts[-d]} ]] ; then
+        unset "LOOKUP_aliases[${opts[-d]}]"
+        return 0
+    fi
+
     [[ -n ${opts[-R]} ]] && lookup_remote=1
     [[ -n ${opts[-P]} ]] && lookup_printout=1
 
@@ -81,7 +114,6 @@ function lookup() {
     shift
 
     LOOKUP_be_${backend} "$@"
-
     return $?
 }
 
@@ -97,34 +129,6 @@ LOOKUP_encode() {
     input=( ${(s::)1} )
     printf '%s' ${(j::)input/(#b)([^A-Za-z0-9_.!~*\'\(\)+-])/%${(l:2::0:)$(([##16]#match))}}
 }
-
-function lalias() {
-    emulate -L zsh
-    local al
-
-    if [[ $1 == '-d' ]] && [[ -n $2 ]] ; then
-        unset "LOOKUP_aliases[$2]"
-        return 0
-    fi
-
-    if [[ -z $1 ]] ; then
-        printf 'Defined backend aliases:\n'
-        for al in ${(k)LOOKUP_aliases}; do
-            printf '%10s=%s\n' ${al} ${LOOKUP_aliases[$al]}
-        done
-
-        return 0
-    fi
-
-    if [[ -z $2 ]] || [[ $1 == '-h' ]] ; then
-        printf 'usage: lalias [-{d,h}] [alias] [lookup-backend]\n'
-        printf '  "lalias -d s" removes the backend alias named "s".\n'
-        [[ $1 == '-h' ]] && return 0 || return 1
-    fi
-
-    LOOKUP_aliases[$1]="$2"
-}
-
 
 # initialize backend list
 lookup -s
