@@ -55,8 +55,8 @@ if [[ -z ${(Mk)supported_modes:#$mode} ]] ; then
     QUERY=''
 fi
 if [[ -z ${QUERY} ]] ; then
-    printf 'usage: %s [-s mode] <query>\n' ${backend}
-    printf '  -l <mode>     specify search mode\n'
+    printf 'usage: %s [-m mode] <query>\n' ${backend}
+    printf '  -m <mode>     specify search mode\n'
     printf '\nAvailable modes are::\n'
     for mode in ${(kon)supported_modes} ; do
         printf '%8s   - %s\n' ${mode} ${supported_modes[$mode]}
