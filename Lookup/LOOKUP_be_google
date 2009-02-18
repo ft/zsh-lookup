@@ -14,7 +14,7 @@ local -x QUERY
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
-    printf 'usage: google <query>\n'
+    printf 'usage: %s <query>\n' ${backend}
 }
 LOOKUP_help ${backend} && return 0
 

@@ -47,8 +47,8 @@ if [[ -n ${lookup_complete} ]] ; then
 
     zstyle -a ":completion:${curcontext}" my-completions private_completions
 
-    (( ${+functions[__lookup_wikipedia_known_locations]} )) ||
-    function __lookup_wikipedia_known_locations() {
+    (( ${+functions[__lookup_${backend}_known_locations]} )) ||
+    function __lookup_${backend}_known_locations() {
         local l
         local -a ls
 
@@ -60,7 +60,7 @@ if [[ -n ${lookup_complete} ]] ; then
     }
 
     comp_args=(
-        '-l[choose a wikipedia flavour]:known locations:__lookup_wikipedia_known_locations'
+        '-l[choose a wikipedia flavour]:known locations:__lookup_'${backend}'_known_locations'
         '*:wikipedia search:true'
     )
 

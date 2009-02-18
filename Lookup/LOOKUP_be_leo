@@ -59,10 +59,10 @@ function LOOKUP_help_${backend}() {
     printf '\n These can be modified via the '\''default-lang'\'' and '\''interface-lang'\''\n'
     printf ' styles in this context: :lookup:%s:%s\n\n' ${lsys} ${backend}
     printf 'Examples:\n'
-    printf ' zstyle '\'':lookup:*:leo'\'' default-lang   frde\n'
-    printf ' zstyle '\'':lookup:*:leo'\'' interface-lang de\n\n'
-    printf ' %% lookup leo sugar\n'
-    printf ' %% lookup leo -l frde Zucker\n\n'
+    printf ' zstyle '\'':lookup:*:%s'\'' default-lang   frde\n' ${backend}
+    printf ' zstyle '\'':lookup:*:%s'\'' interface-lang de\n\n' ${backend}
+    printf ' %% lookup %s sugar\n' ${backend}
+    printf ' %% lookup %s -l frde Zucker\n\n' ${backend}
 }
 
 # This call must be here, too. Just after you defined the help function.
@@ -78,11 +78,12 @@ if [[ -n ${lookup_complete} ]] ; then
     # prevent breakage for other backends.
 
     # completion sub-functions should be called:
-    # __lookup_<backend>_<completion_feature>()
+    # __lookup_${backend}_<completion_feature>()
+    # Again, DO NOT hardcode the name. Use ${backend}!
     # guard their definition by checking the $functions[] entry
     # that belongs to your sub-function.
-    (( ${+functions[__lookup_leo_supported_langs]} )) ||
-    function __lookup_leo_supported_langs() {
+    (( ${+functions[__lookup_${backend}_supported_langs]} )) ||
+    function __lookup_${backend}_supported_langs() {
         local l
         local -a ls
 
@@ -94,7 +95,7 @@ if [[ -n ${lookup_complete} ]] ; then
     }
 
     comp_args=(
-        '-l[set languages]:supported languages:__lookup_leo_supported_langs'
+        '-l[set languages]:supported languages:__lookup_'${backend}'_supported_langs'
         '*:dict.leo.org query:true'
     )
 

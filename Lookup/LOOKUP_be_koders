@@ -99,13 +99,13 @@ LOOKUP_help ${backend} && return 0
 
 if [[ -n ${lookup_complete} ]] ; then
 
-    (( ${+functions[__lookup_koders_langs]} )) ||
-    function __lookup_koders_langs() {
+    (( ${+functions[__lookup_${backend}_langs]} )) ||
+    function __lookup_${backend}_langs() {
         _describe -t koders_langs 'known languages' known_langs
     }
 
-    (( ${+functions[__lookup_koders_licences]} )) ||
-    function __lookup_koders_licences() {
+    (( ${+functions[__lookup_${backend}_licences]} )) ||
+    function __lookup_${backend}_licences() {
         local l
         local -a ls
 
@@ -117,8 +117,8 @@ if [[ -n ${lookup_complete} ]] ; then
     }
 
     comp_args=(
-        '-l[limit search to specific language]:language:__lookup_koders_langs'
-        '-L[limit search to specific licence]:licence:__lookup_koders_licences'
+        '-l[limit search to specific language]:language:__lookup_'${backend}'_langs'
+        '-L[limit search to specific licence]:licence:__lookup_'${backend}'_licences'
         '*:source code search string:true'
     )
 

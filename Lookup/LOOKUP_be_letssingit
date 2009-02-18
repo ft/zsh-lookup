@@ -31,8 +31,8 @@ function LOOKUP_help_${backend}() {
 LOOKUP_help ${backend} && return 0
 
 if [[ -n ${lookup_complete} ]] ; then
-    (( ${+functions[__lookup_letssingit_supported_modes]} )) ||
-    function __lookup_letssingit_supported_modes() {
+    (( ${+functions[__lookup_${backend}_supported_modes]} )) ||
+    function __lookup_${backend}_supported_modes() {
         local m
         local -a ms
 
@@ -44,7 +44,7 @@ if [[ -n ${lookup_complete} ]] ; then
     }
 
     comp_args=(
-        '-m[set search mode]:supported search modes:__lookup_letssingit_supported_modes'
+        '-m[set search mode]:supported search modes:__lookup_'${backend}'_supported_modes'
         '*:letssingit.com query:true'
     )
 
