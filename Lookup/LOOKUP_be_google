@@ -24,6 +24,13 @@ local -x QUERY
 function LOOKUP_help_${backend}() {
     printf 'usage: %s [-1] <query>\n' ${backend}
     printf '  -1    Go directly to the first hit using "I'\''m Feeling Lucky"\n'
+    printf '\n Make web searches via google.com\n'
+    printf ' If you always want to use the -1 option, you may set the use-first-hit\n'
+    printf ' style in this context: :lookup:%s:%s\n' ${lsys} ${backend}
+    printf '\nExamples:\n'
+    printf ' %% lookup %s zsh\n' ${backend}
+    printf ' %% lookup %s -1 openbsd\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s'\'' use-first-hit true\n\n' ${backend}
 }
 LOOKUP_help ${backend} && return 0
 
@@ -32,7 +39,9 @@ for opt in ${(k)opts} ; do
     [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
 done
 
-if [[ ${opts[-1]} == 'yes' ]] ; then
+if [[ ${opts[-1]} == 'yes' ]] ||
+   zstyle -t ":lookup:${lsys}:${backend}" use-first-hit ; then
+
     mode='I'\''m Feeling Lucky'
     mode="$(LOOKUP_encode ${mode})"
     mode="&btnI=${mode}"
