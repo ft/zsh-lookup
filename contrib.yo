@@ -1,0 +1,48 @@
+texinode(Command Line)(World Wide Web)(Utilities)(User Contributions)
+sect(World Wide Web Services for Zsh)
+cindex(world wide web services)
+
+    --- Overview ---
+
+example(usage: lookup [GLOBAL-OPTION(s)...] <backend> OPTION(s)...)
+
+subsect(Quickstart)
+
+subsect(Configuration)
+
+The var(lookup) feature is primarily configured via var(zstyle).
+For additional convenience the user can define and remove aliases for
+backends via the tt(-a) and tt(-d) options of the var(lookup) function
+(see examples below).
+
+The context used for zstyle is:
+example(:lookup:<execution-ident>:<backend>)
+
+startitem()
+item(tt(<executing-ident>))(
+Is an identifier for the code region a style is looked up. Valid strings
+are: tt(-main-), tt(-backend-), tt(-queryhandler-) and tt(-browser-).
+These are provided for maximum control of the context. Usually using tt(*)
+for this field will be good enough.
+)
+item(tt(<backend>))(
+Is the backend in question. Find out about valid strings via:
+tt(lookup -l).
+)
+enditem()
+
+This is a description of all styles that are looked up.
+
+startitem()
+kindex(A-STYLE)
+item(tt(A-STYLE))(
+    --- DESCRIPTION ---
+)
+enditem()
+
+subsect(Query Handlers)
+
+subsect(Examples)
+
+Terrific exacmple:
+example(lookup ...)
