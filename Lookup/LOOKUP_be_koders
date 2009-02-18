@@ -6,7 +6,8 @@
     printf '%s' 'source code search via koders.com' &&
     return 0
 
-local -a comp_args known_langs known_licences
+local -a comp_args known_langs
+local -A known_licences
 
 known_langs=(
 #{{{
@@ -48,36 +49,42 @@ known_langs=(
 
 known_licences=(
 #{{{
-    # TODO: descriptions would be nice...
-    "AFL"
-    "AL20"
-    "ASL"
-    "APSL"
-    "BSD"
-    "CPL"
-    "EPL10"
-    "GTPL"
-    "GPL"
-    "LGPL"
-    "IBMPL"
-    "IOSL"
-    "MSCL"
-    "MSPL"
-    "MSRL"
-    "MSVSSDK"
-    "MITD"
-    "MPL10"
-    "MPL11"
-    "NPL10"
-    "NPL11"
-    "OSL"
-    "PHPL"
-    "PSFL"
-    "SL"
-    "SPL"
-    "W3C"
-    "ZLL"
-    "ZPL"
+    AFL     'Academic Free Licence'
+    AGPLv3  'Affero General Public Licence v3'
+    AL20    'Apache Licence, Version 2.0'
+    ASL     'Apache Software Licence'
+    APSL    'Apple Public Source Licence'
+    BSD     'Berkeley Software Distribution Licence'
+    CPL     'Common Public Licence'
+    EPL10   'Eclipse Public Licence v1.0'
+    GTPL    'Globus Toolkit Public Licence'
+    GPL     'GNU General Public Licence v1 v2 v3'
+    LGPL    'GNU Lesser General Public Licence'
+    IBMPL   'IBM Public Licence'
+    IBMILA  'International Licence Agreement for Non-Warranted Programs'
+    IOSL    'Intel Open Source Licence'
+    MSCL    'Microsoft Community Licence'
+    MSLCL   'Microsoft Limited Community Licence'
+    MSPL    'Microsoft Permissive Licence'
+    MSLPL   'Microsoft Limited Permissive Licence'
+    MSRL    'Microsoft Reference Licence'
+    MSVSSDK 'Microsoft Visual Studio SDK Licence'
+    MITD    'MIT Derived Licence'
+    MPL10   'Mozilla Public Licence Version 1.0'
+    MPL11   'Mozilla Public Licence Version 1.1'
+    NPL10   'Netscape Public Licence, Version 1.0'
+    NPL11   'Netscape Public Licence, Version 1.1'
+    OSL     'Open Software Licence'
+    PHPL    'PHP Licence'
+    CNRIPL  'Python Licence'
+    PSFL    'Python Software Foundation Licence'
+    SL      'Sleepycat Software Product Licence'
+    SISSL   'Sun Industry Standards Source Licence'
+    SPL     'Sun Public Licence'
+    W3C     'W3C Software Licence'
+    WXWLL   'wxWindows Library Licence'
+    ZLL     'zlib/libpng Licence'
+    ZPL     'Zope Public Licence'
 #}}}
 )
 
@@ -90,7 +97,14 @@ if [[ -n ${lookup_complete} ]] ; then
 
     (( ${+functions[__lookup_koders_licences]} )) ||
     function __lookup_koders_licences() {
-        _describe -t koders_licences 'known licences' known_licences
+        local l
+        local -a ls
+
+        ls=()
+        for l in ${(k)known_licences}; do
+            ls+=("$l:${known_licences[$l]}")
+        done
+        _describe -t koders_licences 'known licences' ls
     }
 
     comp_args=(

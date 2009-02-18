@@ -7,7 +7,11 @@
 ## subdirectory are distributed under the same licence as zsh itself (BSD-like).
 ##
 
+# TODO: Write a yodl snippet for inclusion in zsh's contrib documentation.
 # TODO: Backends should be selfdocumenting.
+# TODO: Backends should use $lookup_communicate[] more before calling
+#       LOOKUP_query_handler().
+# TODO: Backends should provide more settings (defaults) via zstyle.
 
 typeset -ga LOOKUP_backends
 typeset -gA LOOKUP_aliases
