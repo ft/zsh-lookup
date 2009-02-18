@@ -1,5 +1,5 @@
 ### vim:ft=zsh:foldmethod=marker
-## packages.debian.org backend for lookup
+## packages.qa.debian.org backend for lookup
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 
 LOOKUP_guard || return 1
@@ -11,7 +11,14 @@ local -a comp_args
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
-    printf 'usage: %s <query>\n' ${backend}
+    printf 'usage: %s <package>\n' ${backend}
+    printf '\n Warps you to a package'\''s page in Debian[1]'\''s Package\n'
+    printf ' Tracking System[2].\n'
+    printf '\nExamples\n'
+    printf ' %% lookup %s wesnoth\n' ${backend}
+    printf ' %% lookup %s zsh\n' ${backend}
+    printf '\n[1] <http://www.debian.org>\n'
+    printf '[2] <http://packages.qa.debian.org>\n'
 }
 LOOKUP_help ${backend} && return 0
 
