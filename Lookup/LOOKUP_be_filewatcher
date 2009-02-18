@@ -12,6 +12,10 @@ local -a comp_args
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
     printf 'usage: %s <query>\n' ${backend}
+    printf '\n Use filewatcher.com to search FTP server contents.\n'
+    printf '\nExamples:\n'
+    printf ' %% lookup %s '\''zsh*.tar.gz'\''\n' ${backend}
+    printf ' %% lookup %s '\''*.jpg'\''\n\n' ${backend}
 }
 LOOKUP_help ${backend} && return 0
 
