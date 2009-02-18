@@ -25,7 +25,8 @@ function _lookup_backends() {
     local -x lookup_describe
     lookup_describe='yes'
 
-    if zstyle -t ":completion:${curcontext}" hide-aliased-backends ; then
+    if [[ -z ${lookup_nohide} ]] &&
+       zstyle -t ":completion:${curcontext}" hide-aliased-backends ; then
         hidealiased=1
     else
         hidealiased=0
@@ -38,6 +39,12 @@ function _lookup_backends() {
     done
 
     _describe -t backends 'backend' backends
+}
+
+(( ${+functions[_lookup_backends_nohide]} )) ||
+function _lookup_backends_nohide() {
+    local -x lookup_nohide='yes'
+    _lookup_backends
 }
 
 (( ${+functions[_lookup_backends_and_aliases]} )) ||
@@ -57,6 +64,7 @@ lookup_complete=1
 args=(
     '-a[add a backend alias]:alias definition:'
     '-d[remove backand alias]:alias name:_lookup_aliases'
+    '-h[provide help]:lookup backend:_lookup_backends_nohide'
     '-i[(re)initialize lookup]:'
     '-l[list available backends]:'
     '-L[list defined backend aliases]:'
