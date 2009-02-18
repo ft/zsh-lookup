@@ -13,8 +13,15 @@ local -a comp_args
 function LOOKUP_help_${backend}() {
     printf 'usage: %s <query>\n' ${backend}
     printf '  -p    go to the bts page of a given package\n'
-    printf '\nBy default, this looks up bugs by bug id. In this mode, hash\n'
-    printf 'signs are automatically stripped off of the query.\n'
+    printf '\n Query Debian[1]'\''s Bug Tracking System[2].\n'
+    printf '\n By default, this looks up bugs by bug id. In this mode, hash\n'
+    printf ' signs are automatically stripped off of the query.\n'
+    printf '\nExamples:\n'
+    printf ' %% lookup %s 123456\n' ${backend}
+    printf ' %% lookup %s "#123456"\n' ${backend}
+    printf ' %% lookup %s -p zsh\n' ${backend}
+    printf '\n[1] <http://www.debian.org>\n'
+    printf '[2] <http://bugs.debian.org>\n'
 }
 LOOKUP_help ${backend} && return 0
 
