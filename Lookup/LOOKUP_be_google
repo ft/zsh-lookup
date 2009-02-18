@@ -6,17 +6,39 @@ LOOKUP_guard || return 1
 [[ -n ${lookup_describe} ]] && printf '%s' 'google websearch' && return 0
 
 if [[ -n ${lookup_complete} ]] ; then
+    local -a comp_args
+    comp_args=(
+        '-1[I'\''m Feeling Lucky!]'
+        '*:dict.leo.org query:true'
+    )
+
+    _arguments -s -w -A '-*' ${comp_args} && return 0
     _message 'google query'
     return 0
 fi
 
+local mode
 local -x QUERY
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
-    printf 'usage: %s <query>\n' ${backend}
+    printf 'usage: %s [-1] <query>\n' ${backend}
+    printf '  -1    Go directly to the first hit using "I'\''m Feeling Lucky"\n'
 }
 LOOKUP_help ${backend} && return 0
+
+zparseopts -A opts -D 1
+for opt in ${(k)opts} ; do
+    [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
+done
+
+if [[ ${opts[-1]} == 'yes' ]] ; then
+    mode='I'\''m Feeling Lucky'
+    mode="$(LOOKUP_encode ${mode})"
+    mode="&btnI=${mode}"
+else
+    mode=''
+fi
 
 QUERY="$*"
 LOOKUP_query_handler
@@ -26,5 +48,5 @@ if [[ -z ${QUERY} ]] ; then
 fi
 
 LOOKUP_encode -s -q
-LOOKUP_browser "http://www.google.com/search?q=${QUERY}"
+LOOKUP_browser "http://www.google.com/search?q=${QUERY}${mode}"
 return $?
