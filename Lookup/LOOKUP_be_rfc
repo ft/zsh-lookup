@@ -6,6 +6,7 @@
 #   This is currently just a real lookup.
 #   rfc-editor.com supports searching, too. ...would be nice...
 
+LOOKUP_guard || return 1
 [[ -n ${lookup_describe} ]] &&
     printf '%s' 'RFC lookup' &&
     return 0

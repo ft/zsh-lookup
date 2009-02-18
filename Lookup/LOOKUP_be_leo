@@ -10,7 +10,12 @@
 ## to follow the general style of this one.
 ##
 
-# This check is required and it should be the first thing the backend does.
+# This should be the first thing a backend does.
+# It makes sure a backend function is not run directly by a user, but
+# only via lookup(), lu() or _lookup().
+LOOKUP_guard || return 1
+
+# This check is required and it should be the second thing the backend does.
 # If $lookup_describe is not empty, only print a short description
 # of what the backend does. Without a newline at the end!
 [[ -n ${lookup_describe} ]] &&

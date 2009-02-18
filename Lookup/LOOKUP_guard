@@ -1,0 +1,21 @@
+### vim:ft=zsh:foldmethod=marker
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+
+local -i fail
+fail=1
+
+(( lookup_complete > 0 )) && fail=0
+[[ -n ${backend} ]] && [[ -n ${lsys} ]] && [[ -n ${lookup_help} ]] && fail=0
+
+if (( fail > 0 )) ; then
+    printf '\nThis function is part of the lookup subsystem.\n'
+    printf 'It is not supposed to be run by you, the user directly.\n'
+    printf 'Use the appropriate backend via: lookup <backend>\n'
+    printf 'See:\n'
+    printf '    lookup -h\n'
+    printf '  and\n'
+    printf '    lookup -h <backend>\n'
+    printf 'for details.\n\n'
+    return 1
+fi
+return 0
