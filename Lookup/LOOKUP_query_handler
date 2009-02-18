@@ -2,7 +2,7 @@
 ## run query handlers
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 
-local olsys
+local olsys ret
 local -a qhs
 
 (( lookup_use_qh == 0 )) && return 0
@@ -18,9 +18,22 @@ for qh in ${qhs} ; do
     else
         if [[ ${lookup_qh_arg-wasunset} == 'wasunset' ]] ; then
             LOOKUP_qh_${qh}
+            ret=$?
         else
             LOOKUP_qh_${qh} ${lookup_qh_arg}
+            ret=$?
         fi
+        case ${ret} in
+            (1) # stop processing
+                break
+                ;;
+            (2) # clear QUERY and stop processing
+                QUERY=''
+                break
+                ;;
+            (0|*) # just continue
+                ;;
+        esac
     fi
 done
 lsys=${olsys}
