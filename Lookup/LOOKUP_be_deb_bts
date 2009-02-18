@@ -8,6 +8,15 @@
 
 local -a comp_args
 
+(( ${+functions[LOOKUP_help_$backend]} )) ||
+function LOOKUP_help_${backend}() {
+    printf 'usage: %s <query>\n' ${backend}
+    printf '  -p    go to the bts page of a given package\n'
+    printf '\nBy default, this looks up bugs by bug id. In this mode, hash\n'
+    printf 'signs are automatically stripped off of the query.\n'
+}
+LOOKUP_help ${backend} && return 0
+
 if [[ -n ${lookup_complete} ]] ; then
     comp_args=(
         '-p[go to package'\''s bts page]:package:_deb_packages avail'
@@ -33,10 +42,7 @@ done
 QUERY="$*"
 LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
-    printf 'usage: %s <query>\n' ${backend}
-    printf '  -p    go to the bts page of a given package\n'
-    printf '\nBy default, this looks up bugs by bug id. In this mode, hash\n'
-    printf 'signs are automatically stripped off of the query.\n'
+    LOOKUP_help_${backend}
     return 1
 fi
 

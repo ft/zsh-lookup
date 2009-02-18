@@ -8,6 +8,14 @@
 
 local -a comp_args
 
+(( ${+functions[LOOKUP_help_$backend]} )) ||
+function LOOKUP_help_${backend}() {
+    printf 'usage: %s [-m] [-a <arg>] <query>\n' ${backend}
+    printf '  -m            search for message id\n'
+    printf '  -a <author>   search for messages by <author>\n'
+}
+LOOKUP_help ${backend} && return 0
+
 if [[ -n ${lookup_complete} ]] ; then
     comp_args=(
         '-a[specify author]:author:'
@@ -35,9 +43,7 @@ done
 QUERY="$*"
 LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
-    printf 'usage: %s [-m] [-a <arg>] <query>\n' ${backend}
-    printf '  -m            search for message id\n'
-    printf '  -a <author>   search for messages by <author>\n'
+    LOOKUP_help_${backend}
     return 1
 fi
 

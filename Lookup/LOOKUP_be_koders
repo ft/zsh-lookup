@@ -88,6 +88,14 @@ known_licences=(
 #}}}
 )
 
+(( ${+functions[LOOKUP_help_$backend]} )) ||
+function LOOKUP_help_${backend}() {
+    printf 'usage: %s <query>\n' ${backend}
+    printf '  -l <lang>     limit search to specific language\n'
+    printf '  -L <licence>  limit search to specific licence\n'
+}
+LOOKUP_help ${backend} && return 0
+
 if [[ -n ${lookup_complete} ]] ; then
 
     (( ${+functions[__lookup_koders_langs]} )) ||
@@ -131,9 +139,7 @@ zparseopts -A opts -D l: L:
 QUERY="$*"
 LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
-    printf 'usage: %s <query>\n' ${backend}
-    printf '  -l <lang>     limit search to specific language\n'
-    printf '  -L <licence>  limit search to specific licence\n'
+    LOOKUP_help_${backend}
     return 1
 fi
 

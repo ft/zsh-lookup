@@ -8,6 +8,13 @@
 
 local -a comp_args
 
+(( ${+functions[LOOKUP_help_$backend]} )) ||
+function LOOKUP_help_${backend}() {
+    printf 'usage: %s [-1] <query>\n' ${backend}
+    printf '  -1    use the search'\''s first-hit option\n'
+}
+LOOKUP_help ${backend} && return 0
+
 if [[ -n ${lookup_complete} ]] ; then
     comp_args=(
         '-1[use /firsthit option]'
@@ -32,8 +39,7 @@ done
 QUERY="$*"
 LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
-    printf 'usage: %s [-1] <query>\n' ${backend}
-    printf '  -1    use the search'\''s first-hit option\n'
+    LOOKUP_help_${backend}
     return 1
 fi
 

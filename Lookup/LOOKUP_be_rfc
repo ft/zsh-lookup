@@ -12,6 +12,14 @@
 
 local -a comp_args
 
+(( ${+functions[LOOKUP_help_$backend]} )) ||
+function LOOKUP_help_${backend}() {
+    printf 'usage: %s [-w] <query>\n' ${backend}
+    printf '  -d    ask to download RFC before reading\n'
+    printf '  -w    just watch. do not ask to download\n'
+}
+LOOKUP_help ${backend} && return 0
+
 if [[ -n ${lookup_complete} ]] ; then
     comp_args=(
         '-d[attempt do download RFCs]:'
@@ -48,9 +56,7 @@ done
 QUERY="$*"
 LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
-    printf 'usage: %s [-w] <query>\n' ${backend}
-    printf '  -d    ask to download RFC before reading\n'
-    printf '  -w    just watch. do not ask to download\n'
+    LOOKUP_help_${backend}
     return 1
 fi
 

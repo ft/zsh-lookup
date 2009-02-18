@@ -8,6 +8,18 @@
 
 local -a comp_args
 
+(( ${+functions[LOOKUP_help_$backend]} )) ||
+function LOOKUP_help_${backend}() {
+    printf 'usage: %s [-{u,w}] [-{l,y} <arg>] <query>\n' ${backend}
+    printf '  -u            search user archive by X-Seq: header\n'
+    printf '  -w            search workers archive by X-Seq: header\n'
+    printf '  -l <list>     limit search to a specific list\n'
+    printf '  -y <year>     limit search to a specific year\n'
+    printf '\nThe normal keyword search is done via google'\''s site: feature.\n'
+    printf 'In X-Seq modes, all non-digits are stripped from query.\n'
+}
+LOOKUP_help ${backend} && return 0
+
 if [[ -n ${lookup_complete} ]] ; then
     comp_args=(
         '-u[users x-seq search]:users\: X-Seq header number:'
@@ -41,13 +53,7 @@ done
 QUERY="$*"
 LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
-    printf 'usage: %s [-{u,w}] [-{l,y} <arg>] <query>\n' ${backend}
-    printf '  -u            search user archive by X-Seq: header\n'
-    printf '  -w            search workers archive by X-Seq: header\n'
-    printf '  -l <list>     limit search to a specific list\n'
-    printf '  -y <year>     limit search to a specific year\n'
-    printf '\nThe normal keyword search is done via google'\''s site: feature.\n'
-    printf 'In X-Seq modes, all non-digits are stripped from query.\n'
+    LOOKUP_help_${backend}
     return 1
 fi
 

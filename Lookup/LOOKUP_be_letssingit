@@ -18,6 +18,17 @@ supported_modes=(
     lyrics  'search contents of lyrics'
 )
 
+(( ${+functions[LOOKUP_help_$backend]} )) ||
+function LOOKUP_help_${backend}() {
+    printf 'usage: %s [-m mode] <query>\n' ${backend}
+    printf '  -m <mode>     specify search mode\n'
+    printf '\nAvailable modes are::\n'
+    for mode in ${(kon)supported_modes} ; do
+        printf '%8s   - %s\n' ${mode} ${supported_modes[$mode]}
+    done
+}
+LOOKUP_help ${backend} && return 0
+
 if [[ -n ${lookup_complete} ]] ; then
     (( ${+functions[__lookup_letssingit_supported_modes]} )) ||
     function __lookup_letssingit_supported_modes() {
@@ -56,12 +67,7 @@ if [[ -z ${(Mk)supported_modes:#$mode} ]] ; then
     QUERY=''
 fi
 if [[ -z ${QUERY} ]] ; then
-    printf 'usage: %s [-m mode] <query>\n' ${backend}
-    printf '  -m <mode>     specify search mode\n'
-    printf '\nAvailable modes are::\n'
-    for mode in ${(kon)supported_modes} ; do
-        printf '%8s   - %s\n' ${mode} ${supported_modes[$mode]}
-    done
+    LOOKUP_help_${backend}
     return 1
 fi
 

@@ -35,6 +35,13 @@ known_locations=(
     uk      'Ukrainian'
 )
 
+(( ${+functions[LOOKUP_help_$backend]} )) ||
+function LOOKUP_help_${backend}() {
+    printf 'usage: %s [-l <arg>] <query>\n' ${backend}
+    printf '  -l <list>     limit search to a specific list\n'
+}
+LOOKUP_help ${backend} && return 0
+
 if [[ -n ${lookup_complete} ]] ; then
 
     zstyle -a ":completion:${curcontext}" my-completions private_completions
@@ -73,8 +80,7 @@ zparseopts -A opts -D l:
 QUERY="$*"
 LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
-    printf 'usage: %s [-l <arg>] <query>\n' ${backend}
-    printf '  -l <list>     limit search to a specific list\n'
+    LOOKUP_help_${backend}
     return 1
 fi
 

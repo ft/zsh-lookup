@@ -11,10 +11,16 @@ fi
 
 local -x QUERY
 
+(( ${+functions[LOOKUP_help_$backend]} )) ||
+function LOOKUP_help_${backend}() {
+    printf 'usage: google <query>\n'
+}
+LOOKUP_help ${backend} && return 0
+
 QUERY="$*"
 LOOKUP_query_handler
 if [[ -z ${QUERY} ]] ; then
-    printf 'usage: google <query>\n'
+    LOOKUP_help_${backend}
     return 1
 fi
 
