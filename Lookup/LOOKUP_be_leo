@@ -59,8 +59,8 @@ function LOOKUP_help_${backend}() {
     printf '\n These can be modified via the '\''default-lang'\'' and '\''interface-lang'\''\n'
     printf ' styles in this context: :lookup:%s:%s\n\n' ${lsys} ${backend}
     printf 'Examples:\n'
-    printf ' zstyle '\'':lookup:*:%s'\'' default-lang   frde\n' ${backend}
-    printf ' zstyle '\'':lookup:*:%s'\'' interface-lang de\n\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s'\'' default-lang   frde\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s'\'' interface-lang de\n\n' ${backend}
     printf ' %% lookup %s sugar\n' ${backend}
     printf ' %% lookup %s -l frde Zucker\n\n' ${backend}
 }

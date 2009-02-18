@@ -91,9 +91,42 @@ known_licences=(
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
+    local l
+    local -i i
+    local -a ls
+
+    i=8
+    ls=(${(on)known_langs})
+
     printf 'usage: %s <query>\n' ${backend}
     printf '  -l <lang>     limit search to specific language\n'
     printf '  -L <licence>  limit search to specific licence\n'
+    printf '\n Search source code via koders.com\n'
+    printf '\nKnown languages:\n'
+    while (( ${#ls} > 0 )) ; do
+        if (( ${#ls} > i )) ; then
+            print ' ' ${ls[1,$i]}
+            shift $i ls
+        else
+            print ' ' ${ls}
+            ls=()
+        fi
+    done
+    printf '\nKnown licences:\n'
+    for l in ${(kon)known_licences} ; do
+        printf '%8s - %s\n' $l ${known_licences[$l]}
+    done
+    printf '\n Per default this backend makes unlimited searches.\n'
+    printf ' Results include code from all languages in all licences.\n'
+    printf '\n You may specify a default language and a default licence via\n'
+    printf ' the default-lang and default-licence styles (both default to '\''*'\''\n'
+    printf ' which means unlimited) in this context: :lookup:%s:%s\n' ${lsys} ${backend}
+    printf '\nExamples:\n'
+    printf ' %% zstyle '\'':lookup:*:%s'\'' default-lang    C\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s'\'' default-licence BSD\n\n' ${backend}
+    printf ' %% lookup %s strlcpy\n' ${backend}
+    printf ' %% lookup %s -l C handle_keys\n' ${backend}
+    printf ' %% lookup %s -L GPL -l C strlcpy\n\n' ${backend}
 }
 LOOKUP_help ${backend} && return 0
 
