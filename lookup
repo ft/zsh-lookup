@@ -12,6 +12,7 @@
 # TODO: Backends should use $lookup_communicate[] more before calling
 #       LOOKUP_query_handler().
 # TODO: Backends should provide more settings (defaults) via zstyle.
+# TODO: Backends should support the global -h option.
 
 typeset -ga LOOKUP_backends
 typeset -gA LOOKUP_aliases
@@ -26,14 +27,15 @@ function lookup() {
     local -A lu_aliases
 
     local -x backend lookup_describe lookup_qh_arg lsys
-    local -ix lookup_remote lookup_printout lookup_use_qh
+    local -ix lookup_remote lookup_printout lookup_use_qh lookup_help
     local -Ax lookup_communicate
 
     lsys='-main-'
+    lookup_help=0
     lookup_use_qh=0
     lookup_remote=0
     lookup_printout=0
-    zparseopts -A opts -D a: d: q: i l L P Q R
+    zparseopts -A opts -D a: d: q: h i l L P Q R
     if [[ $1 == -* ]] ; then
         printf 'Unknown option: %s\n' "$1"
         return 1
@@ -105,23 +107,26 @@ function lookup() {
         return 0
     fi
 
+    [[ -n ${opts[-h]} ]] && lookup_help=1
     [[ -n ${opts[-R]} ]] && lookup_remote=1
     [[ -n ${opts[-P]} ]] && lookup_printout=1
     [[ -n ${opts[-Q]} ]] && lookup_use_qh=1
     [[ -n ${opts[-q]} ]] && lookup_use_qh=1 && lookup_qh_arg=${opts[-q]}
 
-    if [[ -z $1 ]] ; then
-        printf 'usage: lookup [-{i,a,d,Q,l,L,P,R}] [-q <arg>] <backend> OPTION(s)...\n'
-        printf '    -i          (re)initialize lookup\n\n'
-        printf '    -a          add a backend alias\n'
-        printf '    -d          remove an alias for a backend\n\n'
-        printf '    -Q          let a handler create the QUERY string\n'
-        printf '    -q <arg>    same as -Q, but let'\''s you give an argument, too\n\n'
-        printf '    -l          list available backends\n'
-        printf '    -L          list defined backend aliases\n\n'
-        printf '    -P          print which browser command would be used\n'
-        printf '    -R          send url to remote browser\n'
-        return 0
+    if [[ -z $1 ]] || ( [[ $1 == -h ]] && (( argc == 1 )) ) ; then
+        printf 'usage: lookup [-{i,a,d,Q,l,L,P,R}] [-{h,q} <arg>] <backend> OPTION(s)...\n'
+        printf '  Options:\n'
+        printf '    -h [backend] print this text or help for '\''backend'\''\n\n'
+        printf '    -i           (re)initialize lookup\n\n'
+        printf '    -a           add a backend alias\n'
+        printf '    -d           remove an alias for a backend\n\n'
+        printf '    -Q           let a handler create the QUERY string\n'
+        printf '    -q <arg>     same as -Q, but let'\''s you give an argument, too\n\n'
+        printf '    -l           list available backends\n'
+        printf '    -L           list defined backend aliases\n\n'
+        printf '    -P           print which browser command would be used\n'
+        printf '    -R           send url to remote browser\n'
+        (( lookup_help > 0 )) && return 0 || return 1
     fi
 
     backend=${${LOOKUP_aliases[$1]}:-$1}

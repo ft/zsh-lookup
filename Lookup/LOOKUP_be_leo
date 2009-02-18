@@ -34,6 +34,26 @@ supported_langs=(
     chde    'chinese german'
 )
 
+# Lookup backends should be self-documenting.
+# You need to provide a function that prints a useful message that helps
+# the user use the backend.
+# DO NOT hardcode the name of the function. Always use LOOKUP_help_$backend
+# and guard its definition by (( ${+functions[LOOKUP_help_$backend]} )) just
+# like it is done here.
+(( ${+functions[LOOKUP_help_$backend]} )) ||
+function LOOKUP_help_${backend}() {
+    printf 'usage: %s [-l lang] <query>\n' ${backend}
+    printf '  -l <lang>     specify a language definition string\n'
+    printf '\nAvailable language definition strings:\n'
+    for lang in ${(k)supported_langs} ; do
+        printf '%6s   - %s\n' ${lang} ${supported_langs[$lang]}
+    done
+}
+
+# This call must be here, too. Just after you defined the help function.
+# It handles the global -h option of lookup correctly.
+LOOKUP_help ${backend} && return 0
+
 # This test is needed, too.
 # Backends are supposed to bring there own completion.
 if [[ -n ${lookup_complete} ]] ; then
@@ -78,10 +98,10 @@ lang=${opts[-l]}
 # all configuration should be done via zstyle
 # set reasonable defaults, too.
 if [[ -z ${lang} ]] ; then
-    zstyle -s ":lookup:-backend-:${backend}" default-lang lang || lang='ende'
+    zstyle -s ":lookup:${lsys}:${backend}" default-lang lang || lang='ende'
 fi
 
-zstyle -s ":lookup:-backend-:${backend}" interface-lang interface_lang || interface_lang='en'
+zstyle -s ":lookup:${lsys}:${backend}" interface-lang interface_lang || interface_lang='en'
 
 # If applicable, use the remaining arguments as QUERY.
 QUERY="$*"
@@ -101,12 +121,9 @@ if [[ -z ${(Mk)supported_langs:#$lang} ]] ; then
     QUERY=''
 fi
 if [[ -z ${QUERY} ]] ; then
-    printf 'usage: %s [-s lang] <query>\n' ${backend}
-    printf '  -l <lang>     specify a language definition string\n'
-    printf '\nAvailable language definition strings:\n'
-    for lang in ${(k)supported_langs} ; do
-        printf '%6s   - %s\n' ${lang} ${supported_langs[$lang]}
-    done
+    # Here you need to use LOOKUP_help_${backend} NOT LOOKUP_help ${backend}!
+    # Note the underscore! :)
+    LOOKUP_help_${backend}
     return 1
 fi
 
