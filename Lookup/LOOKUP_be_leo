@@ -53,6 +53,16 @@ function LOOKUP_help_${backend}() {
     for lang in ${(k)supported_langs} ; do
         printf '%6s   - %s\n' ${lang} ${supported_langs[$lang]}
     done
+    printf '\n Makes dictionary lookups via dict.leo.org.\n\n'
+    printf ' Default language code: ende (german <-> english).\n'
+    printf ' The interface language used by the website defaults to: en\n'
+    printf '\n These can be modified via the '\''default-lang'\'' and '\''interface-lang'\''\n'
+    printf ' styles in this context: :lookup:%s:%s\n\n' ${lsys} ${backend}
+    printf 'Examples:\n'
+    printf ' zstyle '\'':lookup:*:leo'\'' default-lang   frde\n'
+    printf ' zstyle '\'':lookup:*:leo'\'' interface-lang de\n\n'
+    printf ' %% lookup leo sugar\n'
+    printf ' %% lookup leo -l frde Zucker\n\n'
 }
 
 # This call must be here, too. Just after you defined the help function.
