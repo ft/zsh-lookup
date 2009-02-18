@@ -21,7 +21,7 @@ function LOOKUP_help_${backend}() {
     printf ' %% lookup %s -1 20090215095848.GA21661@schmehl.info\n' ${backend}
     printf ' %% zstyle '\'':lookup:*:%s'\'' use-first-hit true\n' ${backend}
     printf '\n[1] <http://www.debian.org>\n'
-    printf '\n[2] <http://lists.debian.org>\n'
+    printf '[2] <http://lists.debian.org>\n'
 }
 LOOKUP_help ${backend} && return 0
 
