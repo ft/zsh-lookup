@@ -13,7 +13,7 @@ local -a comp_args
 function LOOKUP_help_${backend}() {
     printf 'usage: %s [-1] <query>\n' ${backend}
     printf '  -1    use the search'\''s first-hit option\n'
-    printf '\n Search Debian[1]'\''s Mailinglist Archive my Message-ID: header.\n'
+    printf '\n Search Debian[1]'\''s Mailinglist Archive[2] my Message-ID: header.\n'
     printf ' If you always want to use the -1 option, you may set the use-first-hit\n'
     printf ' style in this context: :lookup:%s:%s\n' ${lsys} ${backend}
     printf '\nExamples:\n'
@@ -21,6 +21,7 @@ function LOOKUP_help_${backend}() {
     printf ' %% lookup %s -1 20090215095848.GA21661@schmehl.info\n' ${backend}
     printf ' %% zstyle '\'':lookup:*:%s'\'' use-first-hit true\n' ${backend}
     printf '\n[1] <http://www.debian.org>\n'
+    printf '\n[2] <http://lists.debian.org>\n'
 }
 LOOKUP_help ${backend} && return 0
 

@@ -11,7 +11,14 @@ local -a comp_args
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
-    printf 'usage: %s <query>\n' ${backend}
+    printf 'usage: %s <package>\n' ${backend}
+    printf '\n Warps you to a package'\''s page in Debian[1]'\''s\n'
+    printf ' Patch Tracking System[2].\n'
+    printf '\nExamples\n'
+    printf ' %% lookup %s fdm\n' ${backend}
+    printf ' %% lookup %s zsh\n' ${backend}
+    printf '\n[1] <http://www.debian.org>\n'
+    printf '[2] <patch-tracking.debian.net>\n'
 }
 LOOKUP_help ${backend} && return 0
 
