@@ -17,7 +17,7 @@ function LOOKUP_help_${backend}() {
     printf ' %% lookup %s fdm\n' ${backend}
     printf ' %% lookup %s zsh\n' ${backend}
     printf '\n[1] <http://www.debian.org>\n'
-    printf '[2] <patch-tracking.debian.net>\n'
+    printf '[2] <http://patch-tracking.debian.net>\n'
 }
 LOOKUP_help ${backend} && return 0
 
