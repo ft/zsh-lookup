@@ -42,6 +42,8 @@ enditem()
 
 subsect(Query Handlers)
 
+subsect(Hooks)
+
 subsect(Examples)
 
 Terrific exacmple:
