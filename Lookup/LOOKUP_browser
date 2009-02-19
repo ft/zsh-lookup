@@ -10,6 +10,9 @@ local -a lookup_browser_args
 lsys='-browser-'
 uri="$1"
 
+zstyle -t ":lookup:${lsys}:${backend}" debug &&
+    printf 'LOOKUP_browser: current context: "%s"\n' ":lookup:${lsys}:${backend}"
+
 if (( lookup_printout > 0 )) || zstyle -t ":lookup:${lsys}:${backend}" debug ; then
     debug='yes'
 fi

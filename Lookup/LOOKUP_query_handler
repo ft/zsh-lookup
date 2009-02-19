@@ -5,6 +5,9 @@
 local olsys qh ret
 local -a qhs
 
+zstyle -t ":lookup:${lsys}:${backend}" debug &&
+    printf 'LOOKUP_query_handler: current context: "%s"\n' ":lookup:${lsys}:${backend}"
+
 (( lookup_use_qh == 0 )) && return 0
 zstyle -a ":lookup:${lsys}:${backend}" query-handlers qhs || return 0
 
