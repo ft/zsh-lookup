@@ -23,10 +23,18 @@ supported_modes=(
 function LOOKUP_help_${backend}() {
     printf 'usage: %s [-m mode] <query>\n' ${backend}
     printf '  -m <mode>     specify search mode\n'
+    printf '\n Make music related queries via letssingit.com\n'
     printf '\nAvailable modes are::\n'
     for mode in ${(kon)supported_modes} ; do
         printf '%8s   - %s\n' ${mode} ${supported_modes[$mode]}
     done
+    printf '\n The default mode is '\''artist'\'', which can be modified via the\n'
+    printf ' '\''default-mode'\'' style in this context: :lookup:%s:%s\n\n' ${lsys} ${backend}
+    printf 'Examples:\n'
+    printf ' %% zstyle '\'':lookup:*:%s'\'' default-mode song\n' ${backend}
+    printf ' %% lookup %s Led Zeppelin\n' ${backend}
+    printf ' %% lookup %s -m album Machine Head\n' ${backend}
+    printf ' %% lookup %s -m song Paint it Black\n' ${backend}
 }
 LOOKUP_help ${backend} && return 0
 
