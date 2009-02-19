@@ -2,9 +2,8 @@
 ## RFC backend for lookup
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 
-# TODO:
-#   This is currently just a real lookup.
-#   rfc-editor.com supports searching, too. ...would be nice...
+# TODO: This is currently just a real lookup. rfc-editor.com supports searching.
+#       ...would be nice...
 
 LOOKUP_guard || return 1
 [[ -n ${lookup_describe} ]] &&
@@ -15,9 +14,36 @@ local -a comp_args
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
-    printf 'usage: %s [-w] <query>\n' ${backend}
+           #-80characters-----------------------------------------------------------------#
+    printf 'usage: %s [-{d,w}] <RFC number>\n' ${backend}
     printf '  -d    ask to download RFC before reading\n'
     printf '  -w    just watch. do not ask to download\n'
+    printf '\n Read RFCs by number.\n'
+    printf ' Supports local files and remote files (via rfc-editor.com).\n'
+    printf '\n First, it looks for a local version of the RFC (within a given path, see\n'
+    printf ' Styles below); if a local version is found, it is opened in a browser. If it\n'
+    printf ' cannot be found (per default) the user is asked if we should try to download\n'
+    printf ' the RFC in question via FTP from rfc-editor.com (only works if the zsh/zftp\n'
+    printf ' module can be loaded). If the answer is yes, the file is downloaded. If that\n'
+    printf ' was successful the *local* file is viewed. If the answer is no, the remote\n'
+    printf ' URL is opened in a browser.\n'
+    printf '\nStyles:\n'
+    printf ' The context in which styles are looked up is: :lookup:%s:%s\n' ${lsys} ${backend}
+    printf ' If a local file is viewed, that changes to:   :lookup:%s:%s-local\n\n' ${lsys} ${backend}
+    printf ' search-path: a list style, defining where to look for local RFCs\n'
+    printf '              (Default: one entry: $HOME - "%s")\n' ${HOME}
+    printf '   save-path: when downloading RFCs, save them to this directory\n'
+    printf '              (Default: $HOME - "%s")\n' ${HOME}
+    printf '    download: boolean; changes the default downloading behaviour\n'
+    printf '              (Default: true: always ask to download non-local RFCs)\n'
+    printf '\n When looking for local RFCs, this backend looks for files named like this:\n'
+    printf '    rfc<->.txt(|.gz|.bz2) (eg: rfc123.txt, rfc234.txt.gz or rfc345.txt.bz2)\n'
+    printf '\nExamples:\n'
+    printf ' %% zstyle '\'':lookup:*:%s'\'' search-path /usr/share/doc/RFC/links ~/myrfcs\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s'\'' save-path   ~/myrfcs\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s'\'' download    false\n' ${backend}
+    printf ' %% lookup %s 881\n' ${backend}
+    printf ' %% lookup %s -w 881\n' ${backend}
 }
 LOOKUP_help ${backend} && return 0
 
@@ -38,8 +64,8 @@ local -i justwatch
 local -A opts
 local -x QUERY
 
-zstyle -s ":lookup:${lsys}:${backend}" save-path   save_path
-zstyle -a ":lookup:${lsys}:${backend}" search-path search_path
+zstyle -s ":lookup:${lsys}:${backend}" save-path   save_path   || save_path=${HOME}
+zstyle -a ":lookup:${lsys}:${backend}" search-path search_path || search_path=(${HOME})
 
 if zstyle -t ":lookup:${lsys}:${backend}" download ; then
     justwatch='0'
