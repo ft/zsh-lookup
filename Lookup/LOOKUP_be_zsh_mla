@@ -11,13 +11,25 @@ local -a comp_args
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
-    printf 'usage: %s [-{u,w}] [-{l,y} <arg>] <query>\n' ${backend}
+    printf 'usage: %s [-{n,u,w}] [-{l,y} <arg>] <query>\n' ${backend}
+    printf '  -n            search the archives for keywords ('\''normal'\'' mode)\n'
     printf '  -u            search user archive by X-Seq: header\n'
     printf '  -w            search workers archive by X-Seq: header\n'
     printf '  -l <list>     limit search to a specific list\n'
     printf '  -y <year>     limit search to a specific year\n'
-    printf '\nThe normal keyword search is done via google'\''s site: feature.\n'
-    printf 'In X-Seq modes, all non-digits are stripped from query.\n'
+    printf '\n Query zsh[1]'\''s Mailing List Arhive[2].'
+    printf '\n The normal keyword search is done via google'\''s '\''site:'\'' feature.\n'
+    printf ' In X-Seq modes (-u and -w), all non-digits are stripped from query.\n'
+    printf '\n The default mode is '\''normal'\'', which can be modified via the\n'
+    printf ' '\''default-mode'\'' style in this context: :lookup:%s:%s\n' ${lsys} ${backend}
+    printf ' Valid values are: normal, users, workers\n'
+    printf '\nExamples:\n'
+    printf ' %% zstyle '\'':lookup:*:%s'\'' default-mode users\n' ${backend}
+    printf ' %% lookup %s released\n' ${backend}
+    printf ' %% lookup %s -u 12345\n' ${backend}
+    printf ' %% lookup %s -w 12345\n' ${backend}
+    printf '\n[1] <http://zsh.sourceforge.net>\n'
+    printf '[2] <http://www.zsh.org/mla/>\n'
 }
 LOOKUP_help ${backend} && return 0
 
@@ -25,8 +37,8 @@ if [[ -n ${lookup_complete} ]] ; then
     comp_args=(
         '-u[users x-seq search]:users\: X-Seq header number:'
         '-w[workers x-seq search]:workers\: X-Seq header number:'
-        '-l[limit search to a specific list]:list name:(users workers)'
-        '-y[limit search to a specific year]:year:'
+        '-l[limit search to a specific list]:list name:(users workers *)'
+        '-y[limit search to a specific year]:year - "*" means all years:'
         '*:zsh mla search:true'
     )
 
@@ -41,15 +53,19 @@ local -x QUERY
 
 list='*'
 year='*'
-mode='normal'
-zparseopts -A opts -D u w l: y: || return 1
+zparseopts -A opts -D n u w l: y: || return 1
 for opt in ${(k)opts} ; do
     [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
 done
 [[ ${opts[-u]} == 'yes' ]] && mode='users'
 [[ ${opts[-w]} == 'yes' ]] && mode='workers'
+[[ ${opts[-n]} == 'yes' ]] && mode='normal'
 [[ -n ${opts[-l]} ]] && list="${opts[-l]}"
 [[ -n ${opts[-y]} ]] && year="${opts[-y]}"
+
+if [[ -z ${mode} ]] ; then
+    zstyle -s ":lookup:${lsys}:${backend}" default-mode mode || mode='normal'
+fi
 
 QUERY="$*"
 LOOKUP_query_handler
