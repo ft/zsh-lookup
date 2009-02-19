@@ -2,7 +2,7 @@
 ## run query handlers
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 
-local olsys ret
+local olsys qh ret
 local -a qhs
 
 (( lookup_use_qh == 0 )) && return 0
