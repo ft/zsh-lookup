@@ -8,11 +8,19 @@ LOOKUP_guard || return 1
     return 0
 
 local -a comp_args
+local -A known_modes
+
+known_modes=(
+    text    'Free text search'
+    msgid   'Search for Message-ID: header'
+    author  'Search for a specific author'
+)
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
-    printf 'usage: %s [-m] [-a <arg>] <query>\n' ${backend}
+    printf 'usage: %s [-{t,m}] [-a <arg>] <query>\n' ${backend}
     printf '  -m            search for message id\n'
+    printf '  -t            free text search\n'
     printf '  -a <author>   search for messages by <author>\n'
 }
 LOOKUP_help ${backend} && return 0
@@ -21,6 +29,7 @@ if [[ -n ${lookup_complete} ]] ; then
     comp_args=(
         '-a[specify author]:author:'
         '-m[search for message id]:message id:'
+        '-t[free text search]:text:'
         '*:usenet search string:true'
     )
 
@@ -33,17 +42,22 @@ local mode author
 local -A opts
 local -x QUERY
 
-mode='normal'
-zparseopts -A opts -D m a: || return 1
+mode='text'
+zparseopts -A opts -D m a: t || return 1
 for opt in ${(k)opts} ; do
     [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
 done
+[[ ${opts[-t]} == 'yes' ]] && mode='text'
 [[ ${opts[-m]} == 'yes' ]] && mode='msgid'
-[[ -n ${opts[-a]} ]] && author="&as_uauthors=${opts[-a]}"
+[[ -n ${opts[-a]} ]] && mode='author' && author="&as_uauthors=${opts[-a]}"
 
 QUERY="$*"
 LOOKUP_query_handler
-if [[ -z ${QUERY} ]] ; then
+if [[ -z ${(M)known_modes:#$mode} ]] ; then
+    printf 'Unknown mode: '\''%s'\''.\n\n' ${mode}
+    QUERY=''
+fi
+if [[ -z ${QUERY} ]] && [[ ${mode} != 'author' ]] ; then
     LOOKUP_help_${backend}
     return 1
 fi
