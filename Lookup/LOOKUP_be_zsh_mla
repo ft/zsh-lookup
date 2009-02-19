@@ -37,7 +37,7 @@ if [[ -n ${lookup_complete} ]] ; then
     comp_args=(
         '-u[users x-seq search]:users\: X-Seq header number:'
         '-w[workers x-seq search]:workers\: X-Seq header number:'
-        '-l[limit search to a specific list]:list name:(users workers *)'
+        '-l[limit search to a specific list]:list name:(users workers "*")'
         '-y[limit search to a specific year]:year - "*" means all years:'
         '*:zsh mla search:true'
     )
