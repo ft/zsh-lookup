@@ -14,6 +14,7 @@ done
 if [[ ${opts[-q]} == 'yes' ]] ; then
     # -q: QUERY is declared 'local -x QUERY' in backends.
     #     That means, it gets handed down to us. Apply our filters to it.
+    unencQUERY="${QUERY}"
     set -- "${QUERY}"
 fi
 

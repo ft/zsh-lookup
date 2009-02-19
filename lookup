@@ -25,7 +25,7 @@ function lookup() {
     local -a opts
     local -A lu_aliases
 
-    local -x backend lookup_describe lookup_qh_arg lsys
+    local -x backend lookup_describe lookup_qh_arg lsys unencQUERY
     local -ix lookup_remote lookup_printout lookup_use_qh lookup_help
     local -Ax lookup_communicate
 
