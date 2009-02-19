@@ -45,6 +45,7 @@ known_langs=(
     "Tcl"
     "VB"
     "VB.NET"
+    "*"
 #}}}
 )
 
@@ -86,6 +87,7 @@ known_licences=(
     WXWLL   'wxWindows Library Licence'
     ZLL     'zlib/libpng Licence'
     ZPL     'Zope Public Licence'
+    "*"     'Match all licences'
 #}}}
 )
 
