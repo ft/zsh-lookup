@@ -79,7 +79,7 @@ fi
 
 QUERY="$*"
 LOOKUP_query_handler
-if [[ -z ${(M)known_modes:#$mode} ]] ; then
+if [[ -z ${(Mk)known_modes:#$mode} ]] ; then
     printf 'Unknown mode: '\''%s'\''.\n\n' ${mode}
     QUERY=''
 fi
