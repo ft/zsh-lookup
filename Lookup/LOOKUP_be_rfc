@@ -33,6 +33,7 @@ function LOOKUP_help_${backend}() {
     printf '\nStyles:\n'
     printf ' The context in which styles are looked up is: %s\n' ${lookup_context}
     LOOKUP_context -l local-files
+    lookup_context="$(LOOKUP_context)"
     printf ' If a local file is viewed, that changes to:   %s\n\n' ${lookup_context}
     printf ' search-path: a list style, defining where to look for local RFCs\n'
     printf '              (Default: one entry: $HOME - "%s")\n' ${HOME}
