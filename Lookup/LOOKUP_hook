@@ -2,8 +2,14 @@
 ## run hooks
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 
-local hook olsys ret
+local hook obackend olsys ret
 local -a hooks
+
+obackend="${backend}"
+if [[ $1 != '--' ]] ; then
+    backend="$1"
+fi
+shift
 
 zstyle -t ":lookup:${lsys}:${backend}" debug &&
     printf 'LOOKUP_hook: current context: "%s"\n' ":lookup:${lsys}:${backend}"
@@ -23,5 +29,6 @@ for hook in ${hooks} ; do
             ;;
     esac
 done
-lsys=${olsys}
+lsys="${olsys}"
+backend="${obackend}"
 return 0

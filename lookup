@@ -148,7 +148,7 @@ function lookup() {
 
     shift
 
-    LOOKUP_hook "$@"
+    LOOKUP_hook -- "$@"
     lsys='-backend-'
     LOOKUP_be_${backend} "$@"
     return $?

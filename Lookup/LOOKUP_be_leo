@@ -144,6 +144,22 @@ if [[ -z ${QUERY} ]] ; then
     return 1
 fi
 
+# You may also put in hooks into your backend. You don't need to though. :)
+# To do so, use the LOOKUP_hook function. The first argument should be a name
+# for the hook. That will adjust the context to:
+#       :lookup:${lsys}:${backend}-${that_name}
+# If you don't want that, use -- as the first argument. Then the context
+# remains to be:
+#       :lookup:${lsys}:${backend}
+# The rest of the arguments are handed over to the hook function unchanged.
+# There is no convention as to what arguments should be provided or whether
+# $lookup_communicate[] should be used. Everything is possible; just make
+# sure you document your hooks properly in the help function earlier.
+#
+# A sample hook call may look like this:
+#LOOKUP_hook "pre_encode" $QUERY $lang $interface_lang
+
+
 # Use LOOKUP_encode() for proper url encoding of the QUERY.
 # Since, QUERY is the most common use case of LOOKUP_encode, it has
 # a special option to handle that variable.

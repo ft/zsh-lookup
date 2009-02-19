@@ -10,7 +10,7 @@ local -a lookup_browser_args
 lsys='-browser-'
 uri="$1"
 
-LOOKUP_hook "$@"
+LOOKUP_hook -- "$@"
 zstyle -t ":lookup:${lsys}:${backend}" debug &&
     printf 'LOOKUP_browser: current context: "%s"\n' ":lookup:${lsys}:${backend}"
 
