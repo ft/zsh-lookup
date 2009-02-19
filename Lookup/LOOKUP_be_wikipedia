@@ -7,8 +7,11 @@ LOOKUP_guard || return 1
     printf '%s' 'search wikipedia' &&
     return 0
 
+local lookup_context
 local -a comp_args private_completions
 local -A known_locations
+
+lookup_context="$(LOOKUP_context)"
 
 known_locations=(
     # yeah, there are more... a lot more.
@@ -49,12 +52,12 @@ function LOOKUP_help_${backend}() {
     printf '\n There are more than that, obviously. Inclusion of codes had to stop\n'
     printf ' somewhere, so I settled for codes, that had 100.000+ articles at the time\n'
     printf ' of writing. The default location is '\''en'\'', which can be modified via the\n'
-    printf ' '\''default-location'\'' style in this context: :lookup:%s:%s\n' ${lsys} ${backend}
+    printf ' '\''default-location'\'' style in this context: %s\n' ${lookup_context}
     printf '\n The completion code only completes the known locations by default. If your\n'
     printf ' code is missing you can add it via the '\''my-completions'\'' list style,\n'
     printf ' looked up in this context: '\'':completion:*:lookup-%s:'\''\n' ${backend}
     printf '\nExamples:\n'
-    printf ' %% zstyle '\'':lookup:*:%s'\''             default-location de\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s:*'\''           default-location de\n' ${backend}
     printf ' %% zstyle '\'':completion:*:lookup-%s:'\'' my-completions   gr:Greek\n' ${backend}
     printf ' %% lookup %s zsh\n' ${backend}
     printf ' %% lookup %s -l de zsh\n' ${backend}
@@ -92,7 +95,7 @@ local loc
 local -A opts
 local -x QUERY
 
-zstyle -s ":lookup:${lsys}:${backend}" default-location loc || loc='en'
+zstyle -s "${lookup_context}" default-location loc || loc='en'
 
 zparseopts -A opts -D l: || return 1
 [[ -n ${opts[-l]} ]] && loc="${opts[-l]}"

@@ -7,8 +7,11 @@ LOOKUP_guard || return 1
     printf '%s' 'source code search via koders.com' &&
     return 0
 
+local lookup_context
 local -a comp_args known_langs
 local -A known_licences
+
+lookup_context="$(LOOKUP_context)"
 
 known_langs=(
 #{{{
@@ -122,10 +125,10 @@ function LOOKUP_help_${backend}() {
     printf ' Results include code from all languages in all licences.\n'
     printf '\n You may specify a default language and a default licence via\n'
     printf ' the default-lang and default-licence styles (both default to '\''*'\''\n'
-    printf ' which means unlimited) in this context: :lookup:%s:%s\n' ${lsys} ${backend}
+    printf ' which means unlimited) in this context: %s\n' ${lookup_context}
     printf '\nExamples:\n'
-    printf ' %% zstyle '\'':lookup:*:%s'\'' default-lang    C\n' ${backend}
-    printf ' %% zstyle '\'':lookup:*:%s'\'' default-licence BSD\n\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s:*'\'' default-lang    C\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s:*'\'' default-licence BSD\n\n' ${backend}
     printf ' %% lookup %s strlcpy\n' ${backend}
     printf ' %% lookup %s -l C handle_keys\n' ${backend}
     printf ' %% lookup %s -L GPL -l C strlcpy\n\n' ${backend}
@@ -165,8 +168,8 @@ fi
 local lang licence
 local -x QUERY
 
-zstyle -s ":lookup:${lsys}:${backend}" default-lang    lang    || lang='*'
-zstyle -s ":lookup:${lsys}:${backend}" default-licence licence || licence='*'
+zstyle -s "${lookup_context}" default-lang    lang    || lang='*'
+zstyle -s "${lookup_context}" default-licence licence || licence='*'
 
 zparseopts -A opts -D l: L: || return 1
 [[ -n ${opts[-l]} ]] && lang="${opts[-l]}"

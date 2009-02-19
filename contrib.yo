@@ -16,7 +16,7 @@ backends via the tt(-a) and tt(-d) options of the var(lookup) function
 (see examples below).
 
 The context used for zstyle is:
-example(:lookup:<execution-ident>:<backend>)
+example(:lookup:<execution-ident>:<backend>:<local-part>)
 
 startitem()
 item(tt(<executing-ident>))(

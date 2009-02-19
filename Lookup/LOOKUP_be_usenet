@@ -7,8 +7,11 @@ LOOKUP_guard || return 1
     printf '%s' 'usenet search' &&
     return 0
 
+local lookup_context
 local -a comp_args
 local -A known_modes
+
+lookup_context="$(LOOKUP_context)"
 
 known_modes=(
     text    'Free text search'
@@ -25,7 +28,7 @@ function LOOKUP_help_${backend}() {
     printf '  -a <author>   search for messages by <author>\n'
     printf '\n Search google'\''s usenet archives via groups.google.com.\n'
     printf '\n Per default, free text searches are done, which can be modified via the\n'
-    printf ' '\''default-mode'\'' style in this context: :lookup:%s:%s\n\n' ${lsys} ${backend}
+    printf ' '\''default-mode'\'' style in this context: %s\n\n' ${lookup_context}
     for m in ${(k)known_modes} ; do
         printf '%8s - %s\n' $m ${known_modes[$m]}
     done
@@ -33,8 +36,8 @@ function LOOKUP_help_${backend}() {
     printf ' If you set default-mode to '\''author'\'', you may also set the\n'
     printf ' '\''default-author'\'' style (which defaults to '\''Joe User'\'').\n'
     printf '\nExamples:\n'
-    printf ' %% zstyle '\'':lookup:*:%s'\'' default-mode   author\n' ${backend}
-    printf ' %% zstyle '\'':lookup:*:%s'\'' default-author "Dr. Foo Bar"\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s:*'\'' default-mode   author\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s:*'\'' default-author "Dr. Foo Bar"\n' ${backend}
     printf ' %% lookup %s zsh prompt colours\n' ${backend}
     printf ' %% lookup %s -a pws Bugs in zsh\n\n' ${backend}
 }
@@ -69,10 +72,10 @@ if [[ -n ${opts[-a]} ]] ; then
 fi
 
 if [[ -z ${mode} ]] ; then
-    zstyle -s ":lookup:${lsys}:${backend}" default-mode mode || mode='text'
+    zstyle -s "${lookup_context}" default-mode mode || mode='text'
     if [[ mode == 'author' ]] && [[ -z ${author} ]] ; then
         local a
-        zstyle -s ":lookup:${lsys}:${backend}" default-author a || a='Joe User'
+        zstyle -s "${lookup_context}" default-author a || a='Joe User'
         author="&as_uauthors=$(LOOKUP_encode $a})"
     fi
 fi

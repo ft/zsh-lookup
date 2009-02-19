@@ -23,7 +23,7 @@ LOOKUP_guard || return 1
     return 0
 
 # declare variables. Assume warncreateglobal is enabled.
-local lang
+local lang lookup_context
 local -a comp_args
 local -A opts supported_langs interface_lang
 
@@ -38,6 +38,13 @@ supported_langs=(
     itde    'italian german'
     chde    'chinese german'
 )
+
+# To find out the current context string you can use the LOOKUP_context()
+# function like this. Please don't use $context or $curcontext to store
+# the result (that may clash with compsys). If you use lookup_context
+# you cannot go wrong. For modifying the local-part of the context, see
+# the comment in the LOOKUP_context file.
+lookup_context="$(LOOKUP_context)"
 
 # Lookup backends should be self-documenting.
 # You need to provide a function that prints a useful message that helps
@@ -58,10 +65,10 @@ function LOOKUP_help_${backend}() {
     printf ' Default language code: ende (german <-> english).\n'
     printf ' The interface language used by the website defaults to: en\n'
     printf '\n These can be modified via the '\''default-lang'\'' and '\''interface-lang'\''\n'
-    printf ' styles in this context: :lookup:%s:%s\n\n' ${lsys} ${backend}
+    printf ' styles in this context: %s\n\n' ${lookup_context}
     printf 'Examples:\n'
-    printf ' %% zstyle '\'':lookup:*:%s'\'' default-lang   frde\n' ${backend}
-    printf ' %% zstyle '\'':lookup:*:%s'\'' interface-lang de\n\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s:*'\'' default-lang   frde\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s:*'\'' interface-lang de\n\n' ${backend}
     printf ' %% lookup %s sugar\n' ${backend}
     printf ' %% lookup %s -l frde Zucker\n\n' ${backend}
 }
@@ -112,13 +119,14 @@ fi
 zparseopts -A opts -D 'l:' || return 1
 lang=${opts[-l]}
 
-# all configuration should be done via zstyle
-# set reasonable defaults, too.
+# all configuration should be done via zstyle. The context should always be
+# the result of what LOOKUP_context() tells us (see the $lookup_context comment
+# earlier, too). Also set reasonable defaults.
 if [[ -z ${lang} ]] ; then
-    zstyle -s ":lookup:${lsys}:${backend}" default-lang lang || lang='ende'
+    zstyle -s "${lookup_context}" default-lang lang || lang='ende'
 fi
 
-zstyle -s ":lookup:${lsys}:${backend}" interface-lang interface_lang || interface_lang='en'
+zstyle -s "${lookup_context}" interface-lang interface_lang || interface_lang='en'
 
 # If applicable, use the remaining arguments as QUERY.
 QUERY="$*"
@@ -148,18 +156,16 @@ fi
 
 # You may also put in hooks into your backend. You don't need to though. :)
 # To do so, use the LOOKUP_hook function. The first argument should be a name
-# for the hook. That will adjust the context to:
-#       :lookup:${lsys}:${backend}-${that_name}
+# for the hook. That will adjust the local-part of the context to that name.
 # If you don't want that, use -- as the first argument. Then the context
-# remains to be:
-#       :lookup:${lsys}:${backend}
+# remains unchanged.
 # The rest of the arguments are handed over to the hook function unchanged.
 # There is no convention as to what arguments should be provided or whether
 # $lookup_communicate[] should be used. Everything is possible; just make
 # sure you document your hooks properly in the help function earlier.
 #
 # A sample hook call may look like this:
-#LOOKUP_hook "pre_encode" $QUERY $lang $interface_lang
+#LOOKUP_hook "pre-encode" $QUERY $lang $interface_lang
 
 
 # Use LOOKUP_encode() for proper url encoding of the QUERY.

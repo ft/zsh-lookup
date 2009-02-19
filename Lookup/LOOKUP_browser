@@ -4,26 +4,28 @@
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 ##
 
-local arg debug format lookup_browser uri i
+local arg debug format lookup_browser uri i lookup_context
 local -a lookup_browser_args
 
 lsys='-browser-'
 uri="$1"
 
-LOOKUP_hook -- "$@"
-zstyle -t ":lookup:${lsys}:${backend}" debug &&
-    printf 'LOOKUP_browser: current context: "%s"\n' ":lookup:${lsys}:${backend}"
+lookup_context="$(LOOKUP_context)"
 
-if (( lookup_printout > 0 )) || zstyle -t ":lookup:${lsys}:${backend}" debug ; then
+LOOKUP_hook -- "$@"
+zstyle -t "${lookup_context}" debug &&
+    printf 'LOOKUP_browser: current context: "%s"\n' "${lookup_context}"
+
+if (( lookup_printout > 0 )) || zstyle -t "${lookup_context}" debug ; then
     debug='yes'
 fi
 
 if (( lookup_remote > 0 )) ; then
-    zstyle -s ":lookup:${lsys}:${backend}" gui_browser lookup_browser
-    zstyle -a ":lookup:${lsys}:${backend}" gui_formats lookup_browser_args
+    zstyle -s "${lookup_context}" gui_browser lookup_browser
+    zstyle -a "${lookup_context}" gui_formats lookup_browser_args
 else
-    zstyle -s ":lookup:${lsys}:${backend}" txt_browser lookup_browser
-    zstyle -a ":lookup:${lsys}:${backend}" txt_formats lookup_browser_args
+    zstyle -s "${lookup_context}" txt_browser lookup_browser
+    zstyle -a "${lookup_context}" txt_formats lookup_browser_args
 fi
 
 [[ -z ${lookup_browser} ]] && lookup_browser=${BROWSER:-w3m}

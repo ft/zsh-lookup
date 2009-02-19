@@ -7,10 +7,12 @@ LOOKUP_guard || return 1
     printf '%s' 'search letssingit.com' &&
     return 0
 
-local mode
+local mode lookup_context
 local -a comp_args
 local -A opts supported_modes
 local -x QUERY
+
+lookup_context="$(LOOKUP_context)"
 
 supported_modes=(
     artist  'search by artist'
@@ -29,9 +31,9 @@ function LOOKUP_help_${backend}() {
         printf '%8s   - %s\n' ${mode} ${supported_modes[$mode]}
     done
     printf '\n The default mode is '\''artist'\'', which can be modified via the\n'
-    printf ' '\''default-mode'\'' style in this context: :lookup:%s:%s\n\n' ${lsys} ${backend}
+    printf ' '\''default-mode'\'' style in this context: %s\n\n' ${lookup_context}
     printf 'Examples:\n'
-    printf ' %% zstyle '\'':lookup:*:%s'\'' default-mode song\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s:*'\'' default-mode song\n' ${backend}
     printf ' %% lookup %s Led Zeppelin\n' ${backend}
     printf ' %% lookup %s -m album Machine Head\n' ${backend}
     printf ' %% lookup %s -m song Paint it Black\n' ${backend}
@@ -65,7 +67,7 @@ zparseopts -A opts -D 'm:' || return 1
 mode=${opts[-m]}
 
 if [[ -z ${mode} ]] ; then
-    zstyle -s ":lookup:${lsys}:${backend}" default-mode mode || mode='artist'
+    zstyle -s "${lookup_context}" default-mode mode || mode='artist'
 fi
 
 QUERY="$*"

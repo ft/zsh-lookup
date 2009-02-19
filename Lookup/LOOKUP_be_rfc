@@ -10,7 +10,10 @@ LOOKUP_guard || return 1
     printf '%s' 'RFC lookup' &&
     return 0
 
+local lookup_context
 local -a comp_args
+
+lookup_context="$(LOOKUP_context)"
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
@@ -28,8 +31,9 @@ function LOOKUP_help_${backend}() {
     printf ' was successful the *local* file is viewed. If the answer is no, the remote\n'
     printf ' URL is opened in a browser.\n'
     printf '\nStyles:\n'
-    printf ' The context in which styles are looked up is: :lookup:%s:%s\n' ${lsys} ${backend}
-    printf ' If a local file is viewed, that changes to:   :lookup:%s:%s-local\n\n' ${lsys} ${backend}
+    printf ' The context in which styles are looked up is: %s\n' ${lookup_context}
+    LOOKUP_context -l local-files
+    printf ' If a local file is viewed, that changes to:   %s\n\n' ${lookup_context}
     printf ' search-path: a list style, defining where to look for local RFCs\n'
     printf '              (Default: one entry: $HOME - "%s")\n' ${HOME}
     printf '   save-path: when downloading RFCs, save them to this directory\n'
@@ -39,9 +43,9 @@ function LOOKUP_help_${backend}() {
     printf '\n When looking for local RFCs, this backend looks for files named like this:\n'
     printf '    rfc<->.txt(|.gz|.bz2) (eg: rfc123.txt, rfc234.txt.gz or rfc345.txt.bz2)\n'
     printf '\nExamples:\n'
-    printf ' %% zstyle '\'':lookup:*:%s'\'' search-path /usr/share/doc/RFC/links ~/myrfcs\n' ${backend}
-    printf ' %% zstyle '\'':lookup:*:%s'\'' save-path   ~/myrfcs\n' ${backend}
-    printf ' %% zstyle '\'':lookup:*:%s'\'' download    false\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s:*'\'' search-path /usr/share/doc/RFC/links ~/myrfcs\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s:*'\'' save-path   ~/myrfcs\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s:*'\'' download    false\n' ${backend}
     printf ' %% lookup %s 881\n' ${backend}
     printf ' %% lookup %s -w 881\n\n' ${backend}
 }
@@ -64,10 +68,10 @@ local -i justwatch
 local -A opts
 local -x QUERY
 
-zstyle -s ":lookup:${lsys}:${backend}" save-path   save_path   || save_path=${HOME}
-zstyle -a ":lookup:${lsys}:${backend}" search-path search_path || search_path=(${HOME})
+zstyle -s "${lookup_context}" save-path   save_path   || save_path=${HOME}
+zstyle -a "${lookup_context}" search-path search_path || search_path=(${HOME})
 
-if zstyle -t ":lookup:${lsys}:${backend}" download ; then
+if zstyle -t "${lookup_context}" download ; then
     justwatch='0'
 else
     justwatch='1'
@@ -93,11 +97,11 @@ for dir in ${search_path} ; do
         LOOKUP_browser ${file}
         return $?
     elif [[ -r ${file}.gz ]]  ; then
-        backend="${backend}-local"
+        LOOKUP_context -l local-files
         LOOKUP_browser ${file}.gz
         return $?
     elif [[ -r ${file}.bz2 ]] ; then
-        backend="${backend}-local"
+        LOOKUP_context -l local-files
         LOOKUP_browser ${file}.bz2
         return $?
     fi
@@ -114,7 +118,7 @@ if (( lookup_printout == 0 )) && (( justwatch == 0 )) && [[ -n ${save_path} ]] ;
     printf 'Shall I download the rfc in question? [y/n] '
     read -q yesno
     if [[ ${yesno} == 'y' ]] ; then
-        backend="${backend}-local"
+        LOOKUP_context -l local-files
         file="${save_path}/rfc${QUERY}.txt"
 
         zftp open ftp.rfc-editor.org "anonymous" "zsh_lookup@somewhere.tld"
