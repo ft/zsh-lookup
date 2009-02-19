@@ -18,10 +18,25 @@ known_modes=(
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
+    local m
     printf 'usage: %s [-{t,m}] [-a <arg>] <query>\n' ${backend}
     printf '  -m            search for message id\n'
     printf '  -t            free text search\n'
     printf '  -a <author>   search for messages by <author>\n'
+    printf '\n Search google'\''s usenet archives via groups.google.com.\n'
+    printf '\n Per default, free text searches are done, which can be modified via the\n'
+    printf ' '\''default-mode'\'' style in this context: :lookup:%s:%s\n\n' ${lsys} ${backend}
+    for m in ${(k)known_modes} ; do
+        printf '%8s - %s\n' $m ${known_modes[$m]}
+    done
+    printf '\n As an exception the <query> argument may be empty in author mode.\n'
+    printf ' If you set default-mode to '\''author'\'', you may also set the\n'
+    printf ' '\''default-author'\'' style (which defaults to '\''Joe User'\'').\n'
+    printf '\nExamples:\n'
+    printf ' %% zstyle '\'':lookup:*:%s'\'' default-mode   author\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s'\'' default-author "Dr. Foo Bar"\n' ${backend}
+    printf ' %% lookup %s zsh prompt colours\n' ${backend}
+    printf ' %% lookup %s -a pws Bugs in zsh\n\n' ${backend}
 }
 LOOKUP_help ${backend} && return 0
 
@@ -42,14 +57,25 @@ local mode author
 local -A opts
 local -x QUERY
 
-mode='text'
 zparseopts -A opts -D m a: t || return 1
 for opt in ${(k)opts} ; do
     [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
 done
 [[ ${opts[-t]} == 'yes' ]] && mode='text'
 [[ ${opts[-m]} == 'yes' ]] && mode='msgid'
-[[ -n ${opts[-a]} ]] && mode='author' && author="&as_uauthors=${opts[-a]}"
+if [[ -n ${opts[-a]} ]] ; then
+    mode='author'
+    author="&as_uauthors=$(LOOKUP_encode ${opts[-a]})"
+fi
+
+if [[ -z ${mode} ]] ; then
+    zstyle -s ":lookup:${lsys}:${backend}" default-mode mode || mode='text'
+    if [[ mode == 'author' ]] && [[ -z ${author} ]] ; then
+        local a
+        zstyle -s ":lookup:${lsys}:${backend}" default-author a || a='Joe User'
+        author="&as_uauthors=$(LOOKUP_encode $a})"
+    fi
+fi
 
 QUERY="$*"
 LOOKUP_query_handler
