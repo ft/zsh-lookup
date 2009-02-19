@@ -12,6 +12,10 @@ local -a comp_args
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
     printf 'usage: %s <query>\n' ${backend}
+    printf '\n Query sourceforge.net for software projects.\n'
+    printf '\nExamples:\n'
+    printf ' %% lookup %s zsh\n' ${backend}
+    printf ' %% lookup %s fdm\n\n' ${backend}
 }
 LOOKUP_help ${backend} && return 0
 

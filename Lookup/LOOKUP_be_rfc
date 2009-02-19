@@ -43,7 +43,7 @@ function LOOKUP_help_${backend}() {
     printf ' %% zstyle '\'':lookup:*:%s'\'' save-path   ~/myrfcs\n' ${backend}
     printf ' %% zstyle '\'':lookup:*:%s'\'' download    false\n' ${backend}
     printf ' %% lookup %s 881\n' ${backend}
-    printf ' %% lookup %s -w 881\n' ${backend}
+    printf ' %% lookup %s -w 881\n\n' ${backend}
 }
 LOOKUP_help ${backend} && return 0
 
