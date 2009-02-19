@@ -34,7 +34,7 @@ function lookup() {
     lookup_use_qh=0
     lookup_remote=0
     lookup_printout=0
-    zparseopts -A opts -D a: d: q: h i l L P Q R
+    zparseopts -A opts -D a: d: q: h i l L P Q R || return 1
     if [[ $1 == -* ]] ; then
         printf 'Unknown option: %s\n' "$1"
         return 1

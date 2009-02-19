@@ -108,7 +108,7 @@ fi
 
 # parse possible options of the backend.
 # 'zparseopts' is the recommended way of doing that.
-zparseopts -A opts -D 'l:'
+zparseopts -A opts -D 'l:' || return 1
 lang=${opts[-l]}
 
 # all configuration should be done via zstyle

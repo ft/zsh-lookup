@@ -6,7 +6,7 @@ setopt extendedglob
 local input output
 local -A opts
 
-zparseopts -A opts -D s q
+zparseopts -A opts -D s q || return 1
 for opt in ${(k)opts} ; do
     [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
 done

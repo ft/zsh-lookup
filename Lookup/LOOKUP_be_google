@@ -34,7 +34,7 @@ function LOOKUP_help_${backend}() {
 }
 LOOKUP_help ${backend} && return 0
 
-zparseopts -A opts -D 1
+zparseopts -A opts -D 1 || return 1
 for opt in ${(k)opts} ; do
     [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
 done

@@ -47,7 +47,7 @@ else
     justwatch='1'
 fi
 
-zparseopts -A opts -D d w
+zparseopts -A opts -D d w || return 1
 for opt in ${(k)opts} ; do
     [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
 done

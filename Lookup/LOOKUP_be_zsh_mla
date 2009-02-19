@@ -42,7 +42,7 @@ local -x QUERY
 list='*'
 year='*'
 mode='normal'
-zparseopts -A opts -D u w l: y:
+zparseopts -A opts -D u w l: y: || return 1
 for opt in ${(k)opts} ; do
     [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
 done

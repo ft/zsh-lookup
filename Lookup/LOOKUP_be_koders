@@ -168,7 +168,7 @@ local -x QUERY
 zstyle -s ":lookup:${lsys}:${backend}" default-lang    lang    || lang='*'
 zstyle -s ":lookup:${lsys}:${backend}" default-licence licence || licence='*'
 
-zparseopts -A opts -D l: L:
+zparseopts -A opts -D l: L: || return 1
 [[ -n ${opts[-l]} ]] && lang="${opts[-l]}"
 [[ -n ${opts[-L]} ]] && licence="${opts[-L]}"
 

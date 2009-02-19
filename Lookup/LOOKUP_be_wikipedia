@@ -75,7 +75,7 @@ local -x QUERY
 
 zstyle -s ":lookup:${lsys}:${backend}" default-locations loc || loc='en'
 
-zparseopts -A opts -D l:
+zparseopts -A opts -D l: || return 1
 [[ -n ${opts[-l]} ]] && loc="${opts[-l]}"
 
 QUERY="$*"

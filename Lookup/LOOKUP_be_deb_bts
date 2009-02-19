@@ -41,7 +41,7 @@ local -A opts
 local -x QUERY
 
 mode='id'
-zparseopts -A opts -D p
+zparseopts -A opts -D p || return 1
 for opt in ${(k)opts} ; do
     [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
 done

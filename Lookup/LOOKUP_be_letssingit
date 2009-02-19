@@ -53,7 +53,7 @@ if [[ -n ${lookup_complete} ]] ; then
     return 0
 fi
 
-zparseopts -A opts -D 'm:'
+zparseopts -A opts -D 'm:' || return 1
 mode=${opts[-m]}
 
 if [[ -z ${mode} ]] ; then
