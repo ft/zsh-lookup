@@ -52,7 +52,8 @@ function LOOKUP_help_${backend}() {
     printf '\n There are more than that, obviously. Inclusion of codes had to stop\n'
     printf ' somewhere, so I settled for codes, that had 100.000+ articles at the time\n'
     printf ' of writing. The default location is '\''en'\'', which can be modified via the\n'
-    printf ' '\''default-location'\'' style in this context: %s\n' ${lookup_context}
+    printf ' '\''default-location'\'' style in this context:\n'
+    printf '        %s\n' ${lookup_context}
     printf '\n The completion code only completes the known locations by default. If your\n'
     printf ' code is missing you can add it via the '\''my-completions'\'' list style,\n'
     printf ' looked up in this context: '\'':completion:*:lookup-%s:'\''\n' ${backend}
