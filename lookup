@@ -21,11 +21,11 @@ function lookup() {
     local -a opts
     local -A lu_aliases
 
-    local -x backend lookup_describe lookup_qh_arg lookup_lp lsys unencQUERY
+    local -x backend lookup_describe lookup_qh_arg lookup_lp lookup_ei unencQUERY
     local -ix lookup_remote lookup_printout lookup_use_qh lookup_help
     local -Ax lookup_communicate
 
-    lsys='-main-'
+    lookup_ei='-main-'
     lookup_help=0
     lookup_use_qh=0
     lookup_remote=0
@@ -147,7 +147,7 @@ function lookup() {
     shift
 
     LOOKUP_hook -- "$@"
-    lsys='-backend-'
+    lookup_ei='-backend-'
     LOOKUP_context -d
     LOOKUP_be_${backend} "$@"
     return $?

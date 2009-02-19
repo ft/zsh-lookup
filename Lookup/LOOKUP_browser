@@ -7,7 +7,7 @@
 local arg debug format lookup_browser uri i lookup_context
 local -a lookup_browser_args
 
-lsys='-browser-'
+lookup_ei='-browser-'
 uri="$1"
 
 lookup_context="$(LOOKUP_context)"

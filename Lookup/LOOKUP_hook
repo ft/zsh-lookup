@@ -2,7 +2,7 @@
 ## run hooks
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 
-local hook obackend olsys ret lookup_context
+local hook obackend old_lookup_ei ret lookup_context
 local -a hooks
 
 lookup_context="$(LOOKUP_context)"
@@ -18,8 +18,8 @@ zstyle -t "${lookup_context}" debug &&
 
 zstyle -a "${lookup_context}" hooks hooks || return 0
 
-olsys=${lsys}
-lsys='-hook-'
+old_lookup_ei=${lookup_ei}
+lookup_ei='-hook-'
 for hook in ${hooks} ; do
     (( ${+functions[$hook]} == 0 )) && continue
     ${hook}
@@ -31,6 +31,6 @@ for hook in ${hooks} ; do
             ;;
     esac
 done
-lsys="${olsys}"
+lookup_ei="${old_lookup_ei}"
 backend="${obackend}"
 return 0

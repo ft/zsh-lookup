@@ -19,6 +19,6 @@ if [[ ${opts[-d]} == 'yes' ]] ; then
 elif [[ -n ${opts[-l]} ]] ; then
     lookup_lp="${opts[-l]}"
 else
-    printf ':lookup:%s:%s:%s' ${lsys} ${backend} ${lookup_lp}
+    printf ':lookup:%s:%s:%s' ${lookup_ei} ${backend} ${lookup_lp}
 fi
 return 0

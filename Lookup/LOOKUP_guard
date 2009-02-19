@@ -5,7 +5,7 @@ local -i fail
 fail=1
 
 (( lookup_complete > 0 )) && fail=0
-[[ -n ${backend} ]] && [[ -n ${lsys} ]] && [[ -n ${lookup_help} ]] && fail=0
+[[ -n ${backend} ]] && [[ -n ${lookup_ei} ]] && [[ -n ${lookup_help} ]] && fail=0
 
 if (( fail > 0 )) ; then
     printf '\nThis function is part of the lookup subsystem.\n'

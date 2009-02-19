@@ -2,7 +2,7 @@
 ## run query handlers
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 
-local olsys qh qh_return ret
+local old_lookup_ei qh qh_return ret
 local -a qhs
 
 zstyle -t "${lookup_context}" debug &&
@@ -12,8 +12,8 @@ zstyle -t "${lookup_context}" debug &&
 zstyle -a "${lookup_context}" query-handlers qhs || return 0
 
 qh_return=0
-olsys=${lsys}
-lsys='-queryhandler-'
+old_lookup_ei=${lookup_ei}
+lookup_ei='-queryhandler-'
 for qh in ${qhs} ; do
     if (( ${+functions[LOOKUP_qh_$qh]} == 0 )) ; then
         printf 'query-handler %s requires this function: %s\n' "${qa}" "LOOKUP_qh_${qh}"
@@ -47,5 +47,5 @@ for qh in ${qhs} ; do
         esac
     fi
 done
-lsys=${olsys}
+lookup_ei=${old_lookup_ei}
 return ${qh_return}
