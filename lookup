@@ -8,10 +8,8 @@
 ##
 
 # TODO: Write a yodl snippet for inclusion in zsh's contrib documentation.
-# TODO: Backends should be selfdocumenting (at least like the leo backend).
 # TODO: Backends should use $lookup_communicate[] more before calling
 #       LOOKUP_query_handler().
-# TODO: Backends should provide more settings (defaults) via zstyle.
 
 typeset -ga LOOKUP_backends
 typeset -gA LOOKUP_aliases
@@ -93,17 +91,28 @@ function lookup() {
     if [[ -n ${opts[-a]} ]] ; then
         local al val
 
+        match=()
         : ${${opts[-a]}/(#b)(*)=(*)}
         al="${match[1]}"
         val="${match[2]}"
+        if [[ -z ${al} ]] || [[ -z ${val} ]] ; then
+            printf 'An alias definition *must* look like this: aliasname=originalname\n'
+            return 1
+        fi
 
         LOOKUP_aliases[$al]="${val}"
         return 0
     fi
 
     if [[ -n ${opts[-d]} ]] ; then
-        unset "LOOKUP_aliases[${opts[-d]}]"
-        return 0
+        if [[ -n ${LOOKUP_aliases[${opts[-d]}]} ]] ; then
+            unset "LOOKUP_aliases[${opts[-d]}]"
+            return 0
+        else
+            printf 'No such backend alias defined: "%s"\n' ${opts[-d]}
+            printf 'Use lookup -L to get a list.\n'
+            return 1
+        fi
     fi
 
     [[ -n ${opts[-h]} ]] && lookup_help=1
