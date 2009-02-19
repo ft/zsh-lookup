@@ -124,11 +124,13 @@ zstyle -s ":lookup:${lsys}:${backend}" interface-lang interface_lang || interfac
 QUERY="$*"
 
 # Call LOOKUP_query_handler() to support the -Q and -q options of lookup.
+# This should also be called like this in every case, as this supports
+# a return value from handler functions that indicates unrecoverable errors.
 # If you want to support return values from handlers, use the
 # $lookup_communicate[] hash, which is meant to be used for that. It can
 # also be used to get additional information into the handler.
 # See LOOKUP_be_letssingit for an example.
-LOOKUP_query_handler
+LOOKUP_query_handler || return 1
 
 # Do appropriate error checking and give usage information
 # if the query is empty.

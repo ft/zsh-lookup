@@ -2,7 +2,7 @@
 ## run query handlers
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 
-local olsys qh ret
+local olsys qh qh_return ret
 local -a qhs
 
 zstyle -t ":lookup:${lsys}:${backend}" debug &&
@@ -11,6 +11,7 @@ zstyle -t ":lookup:${lsys}:${backend}" debug &&
 (( lookup_use_qh == 0 )) && return 0
 zstyle -a ":lookup:${lsys}:${backend}" query-handlers qhs || return 0
 
+qh_return=0
 olsys=${lsys}
 lsys='-queryhandler-'
 for qh in ${qhs} ; do
@@ -34,10 +35,17 @@ for qh in ${qhs} ; do
                 QUERY=''
                 break
                 ;;
+            (3) # clear QUERY and stop processing and return 1
+                # which means, the backends are supposed to return 1, too.
+                # thus, no browser will be called.
+                QUERY=''
+                qh_return=1
+                break
+                ;;
             (0|*) # just continue
                 ;;
         esac
     fi
 done
 lsys=${olsys}
-return 0
+return ${qh_return}

@@ -78,7 +78,7 @@ if [[ -z ${mode} ]] ; then
 fi
 
 QUERY="$*"
-LOOKUP_query_handler
+LOOKUP_query_handler || return 1
 if [[ -z ${(Mk)known_modes:#$mode} ]] ; then
     printf 'Unknown mode: '\''%s'\''.\n\n' ${mode}
     QUERY=''

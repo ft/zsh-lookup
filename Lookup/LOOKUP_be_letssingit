@@ -70,7 +70,7 @@ fi
 
 QUERY="$*"
 lookup_communicate[mode]=${mode}
-LOOKUP_query_handler
+LOOKUP_query_handler || return 1
 if [[ -z ${(Mk)supported_modes:#$mode} ]] ; then
     printf 'Unknown search mode: '\''%s'\''.\n\n' ${mode}
     QUERY=''

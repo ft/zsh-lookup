@@ -50,7 +50,7 @@ else
 fi
 
 QUERY="$*"
-LOOKUP_query_handler
+LOOKUP_query_handler || return 1
 if [[ -z ${QUERY} ]] ; then
     LOOKUP_help_${backend}
     return 1
