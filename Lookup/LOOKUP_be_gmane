@@ -187,6 +187,7 @@ fi
 (( ${+functions[LOOKUP_beh_${backend}_list]} )) ||
 function LOOKUP_beh_${backend}_list() {
     # list mode via tcp_{open,send,close} {{{
+    LOOKUP_guard || return 1
     setopt localoptions no_warncreateglobal
     local mode="$1" q="$2"
 
