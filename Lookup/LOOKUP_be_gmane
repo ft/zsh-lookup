@@ -5,9 +5,12 @@
 LOOKUP_guard || return 1
 [[ -n ${lookup_describe} ]] && printf '%s' 'query gmane.org' && return 0
 
-local lookup_context
+local lookup_context bookmarks
 local -A known_sorts known_opers
 lookup_context="$(LOOKUP_context)"
+
+zstyle -s "${lookup_context}" group-bookmarks bookmarks ||
+    bookmarks="${HOME}/.zgmane.bookmarks"
 
 known_sorts=(
     date        'sort by date'
@@ -64,10 +67,7 @@ if [[ -n ${lookup_complete} ]] ; then
 
     (( ${+functions[__lookup_${backend}_group_bookmarks]} )) ||
     function __lookup_${backend}_group_bookmarks() {
-        local bookmarks
         local -a bms
-
-        zstyle -s "${lookup_context}" group-bookmarks bookmarks || bookmarks="${HOME}/.zgmane.bookmarks"
 
         if [[ -r ${bookmarks} ]] ; then
             bms=(${(f)"$(< $bookmarks)"})
