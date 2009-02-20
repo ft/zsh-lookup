@@ -6,6 +6,7 @@
 # If called with -l <string> it sets the <localpart> of the context
 # to <string>. If called with -d, it sets the <localpart> to its default.
 
+LOOKUP_guard || return 1
 local opt
 local -A opts
 

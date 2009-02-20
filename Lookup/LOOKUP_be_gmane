@@ -29,6 +29,7 @@ known_opers=(
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
     # gmane backend help {{{
+    LOOKUP_guard || return 1
     printf 'usage: %s <query>\n' ${backend}
     printf '  -l        search for original list names (like zsh-workers)\n'
     printf '  -s        match gmane group names (like comp.shell)\n'

@@ -1,6 +1,7 @@
 ### vim:ft=zsh:foldmethod=marker
 ## url encoding for lookup queries, etc.
 
+LOOKUP_guard || return 1
 emulate -L zsh
 setopt extendedglob
 local input output

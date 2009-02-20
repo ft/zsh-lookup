@@ -23,6 +23,7 @@ supported_modes=(
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
+    LOOKUP_guard || return 1
     printf 'usage: %s [-m mode] <query>\n' ${backend}
     printf '  -m <mode>     specify search mode\n'
     printf '\n Make music related queries via letssingit.com\n'

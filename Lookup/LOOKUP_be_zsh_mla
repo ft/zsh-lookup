@@ -14,6 +14,7 @@ lookup_context="$(LOOKUP_context)"
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
+    LOOKUP_guard || return 1
     printf 'usage: %s [-{n,u,w}] [-{l,y} <arg>] <query>\n' ${backend}
     printf '  -n            search the archives for keywords ('\''normal'\'' mode)\n'
     printf '  -u            search user archive by X-Seq: header\n'

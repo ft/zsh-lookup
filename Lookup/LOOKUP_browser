@@ -4,6 +4,7 @@
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 ##
 
+LOOKUP_guard || return 1
 local arg debug format lookup_browser uri i lookup_context
 local -a lookup_browser_args
 

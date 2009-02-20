@@ -2,6 +2,7 @@
 ## run hooks
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 
+LOOKUP_guard || return 1
 local hook obackend old_lookup_ei ret lookup_context
 local -a hooks
 

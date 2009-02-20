@@ -11,6 +11,7 @@ local -a comp_args
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
+    LOOKUP_guard || return 1
     printf 'usage: %s [-p] <query>\n' ${backend}
     printf '  -p    go to the bts page of a given package\n'
     printf '\n Query Debian[1]'\''s Bug Tracking System[2].\n'

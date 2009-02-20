@@ -41,6 +41,7 @@ known_locations=(
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
+    LOOKUP_guard || return 1
     local l
     printf 'usage: %s [-l <arg>] <query>\n' ${backend}
     printf '  -l <location>     use a specific non-default wikipedia location\n'

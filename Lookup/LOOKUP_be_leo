@@ -54,6 +54,7 @@ lookup_context="$(LOOKUP_context)"
 # like it is done here.
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
+    LOOKUP_guard || return 1
            #-80characters-----------------------------------------------------------------#
     printf 'usage: %s [-l lang] <query>\n' ${backend}
     printf '  -l <lang>     specify a language definition string\n'

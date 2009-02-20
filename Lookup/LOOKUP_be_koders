@@ -96,6 +96,7 @@ known_licences=(
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
+    LOOKUP_guard || return 1
     local l
     local -i i
     local -a ls

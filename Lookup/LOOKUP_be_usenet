@@ -21,6 +21,7 @@ known_modes=(
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
+    LOOKUP_guard || return 1
     local m
     printf 'usage: %s [-{t,m}] [-a <arg>] <query>\n' ${backend}
     printf '  -m            search for message id\n'

@@ -14,6 +14,7 @@ lookup_context="$(LOOKUP_context)"
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
+    LOOKUP_guard || return 1
     printf 'usage: %s [-1] <query>\n' ${backend}
     printf '  -1    use the search'\''s first-hit option\n'
     printf '\n Search Debian[1]'\''s Mailinglist Archive[2] my Message-ID: header.\n'

@@ -11,6 +11,7 @@ local -a comp_args
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
+    LOOKUP_guard || return 1
     printf 'usage: %s <package>\n' ${backend}
     printf '\n Warps you to a package'\''s page in Debian[1]'\''s Patch Tracking System[2].\n'
     printf '\nExamples\n'

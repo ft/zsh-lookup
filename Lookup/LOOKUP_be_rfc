@@ -17,6 +17,7 @@ lookup_context="$(LOOKUP_context)"
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
+    LOOKUP_guard || return 1
            #-80characters-----------------------------------------------------------------#
     printf 'usage: %s [-{d,w}] <RFC number>\n' ${backend}
     printf '  -d    ask to download RFC before reading\n'
