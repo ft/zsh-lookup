@@ -135,7 +135,7 @@ function lookup() {
         printf '    -L           list defined backend aliases\n\n'
         printf '    -P           print which browser command would be used\n'
         printf '    -R           send url to remote browser\n'
-        LOOKUP_guard lu &&
+        (( ${+functions[lu]} )) &&
             printf '\n Instead of '\''lookup'\'' the shorter '\''lu'\'' may be used.\n'
         (( lookup_help > 0 )) && return 0 || return 1
     fi

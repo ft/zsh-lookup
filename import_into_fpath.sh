@@ -1,6 +1,6 @@
 #!/bin/sh
 
-files="_lookup lookup"
+files="_lookup"
 subdirs="Lookup"
 
 if [ -z "$1" ] ; then
