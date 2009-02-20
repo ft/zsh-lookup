@@ -40,6 +40,38 @@ function LOOKUP_help_${backend}() {
     printf '  -g <arg>  match messages only from a certain gmane group\n'
     printf '  -o <arg>  use defined operation in search (%s)\n' "${(j:/:)${(@kon)known_opers}}"
     printf '  -S <arg>  use given sorting method (%s)\n' "${(j:/:)${(@kon)known_sorts}}"
+    printf '\n Search the archives of the gmane.org mail2news gateway.\n'
+    printf '\n Default sort method: relevance\n'
+    printf ' Default query logic: and\n'
+    printf ' List-mode (-L and -B options) defaults to: off\n'
+    printf ' Default group bookmark file: %s\n' "${HOME}/.zgmane.bookmarks"
+    printf ' All defaults may be altered by the use of styles.\n'
+    printf '\nStyles:\n'
+    printf ' All styles are looked up in this context:\n'
+    printf '    %s\n\n' ${lookup_context}
+    printf ' group-bookmarks:   file that contains group bookmarks (see below)\n'
+    printf '    list-default:   boolean, use list-mode by default if true\n'
+    printf '    default-sort:   change default sorting method\n'
+    printf '    default-oper:   change default query logic\n'
+    printf '\nBookmarks:\n'
+    printf '\n Often you will want to limit your queries to a certain gmane group.\n'
+    printf ' Since these are lengthy at times, it is awful to type them out.\n'
+    printf ' Therefore, this backend gives you a bookmark file. Its format is:\n'
+    printf '    gname.group.name:description\n'
+    printf ' The '\'':description'\'' part is optional.\n'
+    printf ' That way you can search for group names (using -L, -l and -s) and put\n'
+    printf ' your prefered groups into that file. That way you get rid of a lot of\n'
+    printf ' typing by using completion: % lu gmane -g <tab>\n'
+    printf '\nExamples:\n'
+    printf ' %% zstyle '\'':lookup:*:%s:*'\'' list-default    true\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s:*'\'' default-sort    date\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s:*'\'' default-oper    or\n' ${backend}
+    printf ' %% zstyle '\'':lookup:*:%s:*'\'' group-bookmarks ~/.my_gmane_bookmarks\n' ${backend}
+    printf ' %% lookup %s zsh\n' ${backend}
+    printf ' %% lookup %s -m 20090215095848.GA21661@schmehl.info\n' ${backend}
+    printf ' %% lookup %s -g gmane.comp.shells.fish.user zsh\n' ${backend}
+    printf ' %% lookup %s -L -l zsh-workers\n' ${backend}
+    printf ' %% lookup %s -L -s openbsd\n' ${backend}
     #}}}
 }
 LOOKUP_help ${backend} && return 0
@@ -104,9 +136,9 @@ local author group operation sort ret list_mode
 local -x QUERY
 
 # set some defaults via zstyle
-zstyle -t "${lookup_context}" list-default                  && list_mode='yes'
-zstyle -s "${lookup_context}" default-sort sort             || sort='relevance'
-zstyle -s "${lookup_context}" default-operation operation   || operation='and'
+zstyle -t "${lookup_context}" list-default              && list_mode='yes'
+zstyle -s "${lookup_context}" default-sort sort         || sort='relevance'
+zstyle -s "${lookup_context}" default-oper operation    || operation='and'
 
 # parse options
 zparseopts -A opts -D l s B L m a: g: o: S: || return 1
@@ -192,7 +224,7 @@ function LOOKUP_beh_${backend}_list() {
         line=${line//(#b)*\"(http:\/\/dir.gmane.org\/[^\"]#)\"*/${match[1]}}
         line=${line#http://dir.gmane.org/}
         [[ -z ${line} ]] && continue
-        [[ ${line} == 'search.php' ]] && continue
+        [[ ${line} != gmane.* ]] && continue
         results+=( ${line} )
     done
 
