@@ -1,0 +1,214 @@
+### vim:ft=zsh:foldmethod=marker
+## gmane.org backend for lookup
+## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
+
+LOOKUP_guard || return 1
+[[ -n ${lookup_describe} ]] && printf '%s' 'query gmane.org' && return 0
+
+local lookup_context
+local -A known_sorts known_opers
+lookup_context="$(LOOKUP_context)"
+
+known_sorts=(
+    date        'sort by date'
+    revdate     'sort by reverse date'
+    relevance   'sort by relevance'
+)
+
+known_opers=(
+    and     'require all words'
+    or      'require one word'
+)
+
+(( ${+functions[LOOKUP_help_$backend]} )) ||
+function LOOKUP_help_${backend}() {
+    printf 'usage: %s <query>\n' ${backend}
+    printf '  -l        search for original list names (like zsh-workers)\n'
+    printf '  -s        match gmane group names (like comp.shell)\n'
+    printf '  -L        list-mode; do not open a browser, just print the results\n'
+    printf '            valid with -l and -s.\n'
+    printf '  -m        search for Message-Id: header\n'
+    printf '  -a <arg>  match messages only by a certain author\n'
+    printf '  -g <arg>  match messages only from a certain gmane group\n'
+    printf '  -o <arg>  use defined operation in search (%s)\n' "${(j:/:)${(@kon)known_opers}}"
+    printf '  -S <arg>  use given sorting method (%s)\n' "${(j:/:)${(@kon)known_sorts}}"
+}
+LOOKUP_help ${backend} && return 0
+
+if [[ -n ${lookup_complete} ]] ; then
+    local -a comp_args
+
+    (( ${+functions[__lookup_${backend}_known_operations]} )) ||
+    function __lookup_${backend}_known_operations() {
+        local o
+        local -a os
+
+        os=()
+        for o in ${(k)known_opers}; do
+            os+=("$o:${known_opers[$o]}")
+        done
+        _describe -t gmane_opers 'known operations' os
+    }
+
+    (( ${+functions[__lookup_${backend}_known_sorts]} )) ||
+    function __lookup_${backend}_known_sorts() {
+        local s
+        local -a as
+
+        as=()
+        for s in ${(k)known_sorts}; do
+            as+=("$s:${known_sorts[$s]}")
+        done
+        _describe -t gmane_sorts 'known sorting methods' as
+    }
+
+    (( ${+functions[__lookup_${backend}_group_bookmarks]} )) ||
+    function __lookup_${backend}_group_bookmarks() {
+        local bookmarks
+        local -a bms
+
+        zstyle -s "${lookup_context}" group-bookmarks bookmarks || bookmarks="${HOME}/.zgmane.bookmarks"
+
+        if [[ -r ${bookmarks} ]] ; then
+            bms=(${(f)"$(< $bookmarks)"})
+        fi
+        _describe -t gmane_bookmarks 'bookmarked gmane groups' bms
+    }
+
+    comp_args=(
+        '-l[search for original list names]:list name:'
+        '-s[match gmane group names]:group name:'
+        '-L[switch to list-mode]'
+        '-m[query for message ids]:Message-Id\::'
+        '-a[author name]:author:'
+        '-g[group name]:group:__lookup_'${backend}'_group_bookmarks'
+        '-o[operations]:operation:__lookup_'${backend}'_known_operations'
+        '-S[sorting method]:sorting method:__lookup_'${backend}'_known_sorts'
+        '*:wikipedia search:true'
+    )
+
+    _arguments -s -w -A '-*' ${comp_args} && return 0
+    _message 'gmane query'
+    return 0
+fi
+
+local author group operation sort ret
+local -x QUERY
+
+zparseopts -A opts -D l s L m a: g: o: S: || return 1
+for opt in ${(k)opts} ; do
+    [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
+done
+[[ -n ${opts[-a]} ]] && author="$(LOOKUP_encode ${opts[-a]})"
+[[ -n ${opts[-g]} ]] && group="$(LOOKUP_encode ${opts[-g]})"
+[[ -n ${opts[-o]} ]] && operation="${opts[-o]}"
+[[ -n ${opts[-S]} ]] && sort="${opts[-S]}"
+
+if [[ -z ${sort} ]] ; then
+    zstyle -s "${lookup_context}" default-sort sort || sort='relevance'
+fi
+if [[ -z ${operation} ]] ; then
+    zstyle -s "${lookup_context}" default-operation operation || operation='and'
+fi
+
+QUERY="$*"
+lookup_communicate[author]="${author}"
+lookup_communicate[group]="${group}"
+lookup_communicate[operation]="${operation}"
+lookup_communicate[sort]="${sort}"
+LOOKUP_query_handler || return 1
+[[ ${lookup_communicate[author]} != ${author} ]] && author="${lookup_communicate[author]}"
+[[ ${lookup_communicate[group]} != ${group} ]] && group="${lookup_communicate[group]}"
+[[ ${lookup_communicate[operation]} != ${operation} ]] && operation="${lookup_communicate[operation]}"
+[[ ${lookup_communicate[sort]} != ${sort} ]] && sort="${lookup_communicate[sort]}"
+
+if [[ -z ${(Mk)known_opers:#$operation} ]] ; then
+    printf 'Unknown operation: '\''%s'\''.\n\n' ${mode}
+    QUERY=''
+elif [[ -z ${(Mk)known_sorts:#$sort} ]] ; then
+    printf 'Unknown sorting method: '\''%s'\''.\n\n' ${mode}
+    QUERY=''
+fi
+if [[ -z ${QUERY} ]] ; then
+    if [[ ${opts[-l]} == 'yes' ]] || [[ ${opts[-s]} == 'yes' ]] || [[ ${opts[-m]} == 'yes' ]] ; then
+        LOOKUP_help_${backend}
+        return 1
+    fi
+fi
+if [[ -z ${QUERY} ]] && [[ -z ${group} ]] && [[ -z ${author} ]] ; then
+    LOOKUP_help_${backend}
+    return 1
+fi
+
+(( ${+functions[LOOKUP_beh_${backend}_list]} )) ||
+function LOOKUP_beh_${backend}_list() {
+    setopt localoptions no_warncreateglobal
+    local mode="$1" q="$2"
+
+    (( ${+functions[tcp_open]} )) || autoload -Uz tcp_open
+    (( ${+functions[tcp_send]} )) || autoload -Uz tcp_send
+
+    case ${mode} in
+    (list)
+        tcp_open -q gmane.org 80 gmane || return 1
+        tcp_send -s gmane -- "GET /find.php?list=${q} HTTP/1.1"
+        tcp_send -s gmane -- 'HOST: gmane.org'
+        ;;
+    (match)
+        tcp_open -q dir.gmane.org 80 gmane || return 1
+        tcp_send -s gmane -- "GET /search.php?match=${q} HTTP/1.1"
+        tcp_send -s gmane -- 'HOST: dir.gmane.org'
+        ;;
+    (*)
+        return 1
+        ;;
+    esac
+
+    tcp_send -s gmane -- 'Connection: close'
+    tcp_send -s gmane -- ''
+
+    TCP_SILENT='yes'
+    tcp_read -b -d -s gmane
+    TCP_SILENT=''
+
+    tcp_close -q -s gmane
+
+    results=()
+    for line in ${tcp_lines} ; do
+        [[ ${line} != *'dir.gmane.org'* ]] && continue
+        line=${line//(#b)*\"(http:\/\/dir.gmane.org\/[^\"]#)\"*/${match[1]}}
+        line=${line#http://dir.gmane.org/}
+        [[ -z ${line} ]] && continue
+        [[ ${line} == 'search.php' ]] && continue
+        results+=( ${line} )
+    done
+
+    print -l ${results}
+    return 0
+}
+
+LOOKUP_encode -q
+if [[ ${opts[-l]} == 'yes' ]] ; then
+    if [[ ${opts[-L]} == 'yes' ]] ; then
+        LOOKUP_beh_${backend}_list 'list' ${QUERY}
+        ret=$?
+    else
+        LOOKUP_browser "http://gmane.org/find.php?list=${QUERY}"
+        ret=$?
+    fi
+elif [[ ${opts[-s]} == 'yes' ]] ; then
+    if [[ ${opts[-L]} == 'yes' ]] ; then
+        LOOKUP_beh_${backend}_list 'match' ${QUERY}
+        ret=$?
+    else
+        LOOKUP_browser "http://dir.gmane.org/search.php?match=${QUERY}"
+        ret=$?
+    fi
+elif [[ ${opts[-m]} == 'yes' ]] ; then
+    LOOKUP_browser "http://mid.gmane.org/${QUERY}"
+    ret=$?
+else
+    LOOKUP_browser "http://search.gmane.org/?query=${QUERY}&author=${author}&group=${group}&DEFAULTOP=${operation}&sort=${sort}"
+    ret=$?
+fi
+return ${ret}
