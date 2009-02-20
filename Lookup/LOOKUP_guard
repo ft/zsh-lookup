@@ -4,6 +4,12 @@
 local -i fail
 fail=1
 
+if [[ $1 == '-fd' ]] ; then
+    shift
+    (( ${+functions[$1]} )) && return 0
+    return 1
+fi
+
 (( lookup_complete > 0 )) && fail=0
 [[ -n ${backend} ]] && [[ -n ${lookup_ei} ]] && [[ -n ${lookup_help} ]] && fail=0
 
