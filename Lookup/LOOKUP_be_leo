@@ -49,10 +49,10 @@ lookup_context="$(LOOKUP_context)"
 # Lookup backends should be self-documenting.
 # You need to provide a function that prints a useful message that helps
 # the user use the backend.
-# DO NOT hardcode the name of the function. Always use LOOKUP_help_$backend
-# and guard its definition by (( ${+functions[LOOKUP_help_$backend]} )) just
+# DO NOT hardcode the name of the function. Always use LOOKUP_help_${backend}
+# and guard its definition by 'LOOKUP_guard -fd LOOKUP_help_${backend}' just
 # like it is done here.
-(( ${+functions[LOOKUP_help_$backend]} )) ||
+LOOKUP_guard -fd LOOKUP_help_${backend} ||
 function LOOKUP_help_${backend}() {
     LOOKUP_guard || return 1
            #-80characters-----------------------------------------------------------------#
@@ -91,7 +91,7 @@ if [[ -n ${lookup_complete} ]] ; then
     # Again, DO NOT hardcode the name. Use ${backend}!
     # guard their definition by checking the $functions[] entry
     # that belongs to your sub-function.
-    (( ${+functions[__lookup_${backend}_supported_langs]} )) ||
+    LOOKUP_guard -fd __lookup_${backend}_supported_langs ||
     function __lookup_${backend}_supported_langs() {
         local l
         local -a ls

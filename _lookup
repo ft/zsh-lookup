@@ -4,7 +4,7 @@
 
 function _lookup() {
 
-(( ${+functions[_lookup_aliases]} )) ||
+LOOKUP_guard -fd _lookup_aliases ||
 function _lookup_aliases() {
     local al
     local -a aliases
@@ -17,7 +17,7 @@ function _lookup_aliases() {
     _describe  -t aliases 'backend alias' aliases
 }
 
-(( ${+functions[_lookup_backends]} )) ||
+LOOKUP_guard -fd _lookup_backends ||
 function _lookup_backends() {
     local be
     local -i hidealiased
@@ -41,13 +41,13 @@ function _lookup_backends() {
     _describe -t backends 'backend' backends
 }
 
-(( ${+functions[_lookup_backends_nohide]} )) ||
+LOOKUP_guard -fd _lookup_backends_nohide ||
 function _lookup_backends_nohide() {
     local -x lookup_nohide='yes'
     _lookup_backends
 }
 
-(( ${+functions[_lookup_backends_and_aliases]} )) ||
+LOOKUP_guard -fd _lookup_backends_and_aliases ||
 function _lookup_backends_and_aliases() {
     _alternative \
         'aliases: :_lookup_aliases' \

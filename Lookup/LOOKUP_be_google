@@ -22,7 +22,7 @@ local -x QUERY
 
 lookup_context="$(LOOKUP_context)"
 
-(( ${+functions[LOOKUP_help_$backend]} )) ||
+LOOKUP_guard -fd LOOKUP_help_${backend} ||
 function LOOKUP_help_${backend}() {
     LOOKUP_guard || return 1
     printf 'usage: %s [-1] <query>\n' ${backend}

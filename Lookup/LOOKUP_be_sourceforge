@@ -9,7 +9,7 @@ LOOKUP_guard || return 1
 
 local -a comp_args
 
-(( ${+functions[LOOKUP_help_$backend]} )) ||
+LOOKUP_guard -fd LOOKUP_help_${backend} ||
 function LOOKUP_help_${backend}() {
     LOOKUP_guard || return 1
     printf 'usage: %s <query>\n' ${backend}

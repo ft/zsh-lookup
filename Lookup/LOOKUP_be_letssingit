@@ -21,7 +21,7 @@ supported_modes=(
     lyrics  'search contents of lyrics'
 )
 
-(( ${+functions[LOOKUP_help_$backend]} )) ||
+LOOKUP_guard -fd LOOKUP_help_${backend} ||
 function LOOKUP_help_${backend}() {
     LOOKUP_guard || return 1
     printf 'usage: %s [-m mode] <query>\n' ${backend}
@@ -42,7 +42,7 @@ function LOOKUP_help_${backend}() {
 LOOKUP_help ${backend} && return 0
 
 if [[ -n ${lookup_complete} ]] ; then
-    (( ${+functions[__lookup_${backend}_supported_modes]} )) ||
+    LOOKUP_guard -fd __lookup_${backend}_supported_modes ||
     function __lookup_${backend}_supported_modes() {
         local m
         local -a ms

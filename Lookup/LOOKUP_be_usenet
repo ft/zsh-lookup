@@ -19,7 +19,7 @@ known_modes=(
     author  'Search for a specific author'
 )
 
-(( ${+functions[LOOKUP_help_$backend]} )) ||
+LOOKUP_guard -fd LOOKUP_help_${backend} ||
 function LOOKUP_help_${backend}() {
     LOOKUP_guard || return 1
     local m

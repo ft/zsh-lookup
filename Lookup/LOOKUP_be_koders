@@ -94,7 +94,7 @@ known_licences=(
 #}}}
 )
 
-(( ${+functions[LOOKUP_help_$backend]} )) ||
+LOOKUP_guard -fd LOOKUP_help_${backend} ||
 function LOOKUP_help_${backend}() {
     LOOKUP_guard || return 1
     local l
@@ -138,12 +138,12 @@ LOOKUP_help ${backend} && return 0
 
 if [[ -n ${lookup_complete} ]] ; then
 
-    (( ${+functions[__lookup_${backend}_langs]} )) ||
+    LOOKUP_guard -fd __lookup_${backend}_langs ||
     function __lookup_${backend}_langs() {
         _describe -t koders_langs 'known languages' known_langs
     }
 
-    (( ${+functions[__lookup_${backend}_licences]} )) ||
+    LOOKUP_guard -fd __lookup_${backend}_licences ||
     function __lookup_${backend}_licences() {
         local l
         local -a ls

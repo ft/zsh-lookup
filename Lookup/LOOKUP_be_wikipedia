@@ -39,7 +39,7 @@ known_locations=(
     uk      'Ukrainian'
 )
 
-(( ${+functions[LOOKUP_help_$backend]} )) ||
+LOOKUP_guard -fd LOOKUP_help_${backend} ||
 function LOOKUP_help_${backend}() {
     LOOKUP_guard || return 1
     local l
@@ -71,7 +71,7 @@ if [[ -n ${lookup_complete} ]] ; then
 
     zstyle -a ":completion:${curcontext}" my-completions private_completions
 
-    (( ${+functions[__lookup_${backend}_known_locations]} )) ||
+    LOOKUP_guard -fd __lookup_${backend}_known_locations ||
     function __lookup_${backend}_known_locations() {
         local l
         local -a ls

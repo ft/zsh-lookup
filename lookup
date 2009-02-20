@@ -67,7 +67,10 @@ function lookup() {
         local -a fcts
 
         LOOKUP_backends=()
-        fcts=(LOOKUP_browser LOOKUP_browser)
+        fcts=(
+            LOOKUP_browser LOOKUP_context LOOKUP_encode LOOKUP_guard
+            LOOKUP_help LOOKUP_hook LOOKUP_query_handler
+        )
 
         for file in ${^fpath}/LOOKUP_be_*~*(\~|.zwc)(N.) ; do
             file=${file:t}
@@ -132,7 +135,7 @@ function lookup() {
         printf '    -L           list defined backend aliases\n\n'
         printf '    -P           print which browser command would be used\n'
         printf '    -R           send url to remote browser\n'
-        (( ${+functions[lu]} > 0 )) &&
+        LOOKUP_guard lu &&
             printf '\n Instead of '\''lookup'\'' the shorter '\''lu'\'' may be used.\n'
         (( lookup_help > 0 )) && return 0 || return 1
     fi

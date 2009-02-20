@@ -26,7 +26,7 @@ known_opers=(
     or      'require one word'
 )
 
-(( ${+functions[LOOKUP_help_$backend]} )) ||
+LOOKUP_guard -fd LOOKUP_help_${backend} ||
 function LOOKUP_help_${backend}() {
     # gmane backend help {{{
     LOOKUP_guard || return 1
@@ -81,7 +81,7 @@ if [[ -n ${lookup_complete} ]] ; then
     # gmane backend completion code {{{
     local -a comp_args
 
-    (( ${+functions[__lookup_${backend}_known_operations]} )) ||
+    LOOKUP_guard -fd __lookup_${backend}_known_operations ||
     function __lookup_${backend}_known_operations() {
         local o
         local -a os
@@ -93,7 +93,7 @@ if [[ -n ${lookup_complete} ]] ; then
         _describe -t gmane_opers 'known operations' os
     }
 
-    (( ${+functions[__lookup_${backend}_known_sorts]} )) ||
+    LOOKUP_guard -fd __lookup_${backend}_known_sorts ||
     function __lookup_${backend}_known_sorts() {
         local s
         local -a as
@@ -105,7 +105,7 @@ if [[ -n ${lookup_complete} ]] ; then
         _describe -t gmane_sorts 'known sorting methods' as
     }
 
-    (( ${+functions[__lookup_${backend}_group_bookmarks]} )) ||
+    LOOKUP_guard -fd __lookup_${backend}_group_bookmarks ||
     function __lookup_${backend}_group_bookmarks() {
         local -a bms
 
@@ -185,15 +185,15 @@ if [[ -z ${QUERY} ]] && [[ -z ${group} ]] && [[ -z ${author} ]] ; then
     return 1
 fi
 
-(( ${+functions[LOOKUP_beh_${backend}_list]} )) ||
+LOOKUP_guard -fd LOOKUP_beh_${backend}_list ||
 function LOOKUP_beh_${backend}_list() {
     # list mode via tcp_{open,send,close} {{{
     LOOKUP_guard || return 1
     setopt localoptions no_warncreateglobal
     local mode="$1" q="$2"
 
-    (( ${+functions[tcp_open]} )) || autoload -Uz tcp_open
-    (( ${+functions[tcp_send]} )) || autoload -Uz tcp_send
+    LOOKUP_guard -fd tcp_open || autoload -Uz tcp_open
+    LOOKUP_guard -fd tcp_send || autoload -Uz tcp_send
 
     case ${mode} in
     (list)
