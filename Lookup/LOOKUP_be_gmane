@@ -9,6 +9,9 @@ local lookup_context bookmarks
 local -A known_sorts known_opers
 lookup_context="$(LOOKUP_context)"
 
+# Set up the path name of the bookmark file. Looked up in the :lookup:*
+# context because it may not be limited to compsys in the future
+# (maybe someone will write bookmark managing via zsh/curses...). :-)
 zstyle -s "${lookup_context}" group-bookmarks bookmarks ||
     bookmarks="${HOME}/.zgmane.bookmarks"
 
@@ -25,20 +28,24 @@ known_opers=(
 
 (( ${+functions[LOOKUP_help_$backend]} )) ||
 function LOOKUP_help_${backend}() {
+    # gmane backend help {{{
     printf 'usage: %s <query>\n' ${backend}
     printf '  -l        search for original list names (like zsh-workers)\n'
     printf '  -s        match gmane group names (like comp.shell)\n'
     printf '  -L        list-mode; do not open a browser, just print the results\n'
     printf '            valid with -l and -s.\n'
+    printf '  -B        browser-mode; opposite of -L\n'
     printf '  -m        search for Message-Id: header\n'
     printf '  -a <arg>  match messages only by a certain author\n'
     printf '  -g <arg>  match messages only from a certain gmane group\n'
     printf '  -o <arg>  use defined operation in search (%s)\n' "${(j:/:)${(@kon)known_opers}}"
     printf '  -S <arg>  use given sorting method (%s)\n' "${(j:/:)${(@kon)known_sorts}}"
+    #}}}
 }
 LOOKUP_help ${backend} && return 0
 
 if [[ -n ${lookup_complete} ]] ; then
+    # gmane backend completion code {{{
     local -a comp_args
 
     (( ${+functions[__lookup_${backend}_known_operations]} )) ||
@@ -90,12 +97,19 @@ if [[ -n ${lookup_complete} ]] ; then
     _arguments -s -w -A '-*' ${comp_args} && return 0
     _message 'gmane query'
     return 0
+    #}}}
 fi
 
-local author group operation sort ret
+local author group operation sort ret list_mode
 local -x QUERY
 
-zparseopts -A opts -D l s L m a: g: o: S: || return 1
+# set some defaults via zstyle
+zstyle -t "${lookup_context}" list-default                  && list_mode='yes'
+zstyle -s "${lookup_context}" default-sort sort             || sort='relevance'
+zstyle -s "${lookup_context}" default-operation operation   || operation='and'
+
+# parse options
+zparseopts -A opts -D l s B L m a: g: o: S: || return 1
 for opt in ${(k)opts} ; do
     [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
 done
@@ -103,14 +117,10 @@ done
 [[ -n ${opts[-g]} ]] && group="$(LOOKUP_encode ${opts[-g]})"
 [[ -n ${opts[-o]} ]] && operation="${opts[-o]}"
 [[ -n ${opts[-S]} ]] && sort="${opts[-S]}"
+[[ -n ${opts[-L]} ]] && list_mode='yes'
+[[ -n ${opts[-B]} ]] && list_mode=''
 
-if [[ -z ${sort} ]] ; then
-    zstyle -s "${lookup_context}" default-sort sort || sort='relevance'
-fi
-if [[ -z ${operation} ]] ; then
-    zstyle -s "${lookup_context}" default-operation operation || operation='and'
-fi
-
+# set QUERY and export parameters for query handlers via $lookup_communicate[]
 QUERY="$*"
 lookup_communicate[author]="${author}"
 lookup_communicate[group]="${group}"
@@ -122,6 +132,7 @@ LOOKUP_query_handler || return 1
 [[ ${lookup_communicate[operation]} != ${operation} ]] && operation="${lookup_communicate[operation]}"
 [[ ${lookup_communicate[sort]} != ${sort} ]] && sort="${lookup_communicate[sort]}"
 
+# validate arguments
 if [[ -z ${(Mk)known_opers:#$operation} ]] ; then
     printf 'Unknown operation: '\''%s'\''.\n\n' ${mode}
     QUERY=''
@@ -129,11 +140,12 @@ elif [[ -z ${(Mk)known_sorts:#$sort} ]] ; then
     printf 'Unknown sorting method: '\''%s'\''.\n\n' ${mode}
     QUERY=''
 fi
-if [[ -z ${QUERY} ]] ; then
-    if [[ ${opts[-l]} == 'yes' ]] || [[ ${opts[-s]} == 'yes' ]] || [[ ${opts[-m]} == 'yes' ]] ; then
-        LOOKUP_help_${backend}
-        return 1
-    fi
+if [[ -z ${QUERY} ]] &&
+   ( [[ ${opts[-l]} == 'yes' ]] || [[ ${opts[-s]} == 'yes' ]] || [[ ${opts[-m]} == 'yes' ]] )
+   then
+
+    LOOKUP_help_${backend}
+    return 1
 fi
 if [[ -z ${QUERY} ]] && [[ -z ${group} ]] && [[ -z ${author} ]] ; then
     LOOKUP_help_${backend}
@@ -142,6 +154,7 @@ fi
 
 (( ${+functions[LOOKUP_beh_${backend}_list]} )) ||
 function LOOKUP_beh_${backend}_list() {
+    # list mode via tcp_{open,send,close} {{{
     setopt localoptions no_warncreateglobal
     local mode="$1" q="$2"
 
@@ -185,30 +198,32 @@ function LOOKUP_beh_${backend}_list() {
 
     print -l ${results}
     return 0
+    #}}}
 }
 
+# make the actual queries
 LOOKUP_encode -q
 if [[ ${opts[-l]} == 'yes' ]] ; then
-    if [[ ${opts[-L]} == 'yes' ]] ; then
+    if [[ ${list_mode} == 'yes' ]] ; then
         LOOKUP_beh_${backend}_list 'list' ${QUERY}
-        ret=$?
+        ret="$?"
     else
         LOOKUP_browser "http://gmane.org/find.php?list=${QUERY}"
-        ret=$?
+        ret="$?"
     fi
 elif [[ ${opts[-s]} == 'yes' ]] ; then
-    if [[ ${opts[-L]} == 'yes' ]] ; then
+    if [[ ${list_mode} == 'yes' ]] ; then
         LOOKUP_beh_${backend}_list 'match' ${QUERY}
-        ret=$?
+        ret="$?"
     else
         LOOKUP_browser "http://dir.gmane.org/search.php?match=${QUERY}"
-        ret=$?
+        ret="$?"
     fi
 elif [[ ${opts[-m]} == 'yes' ]] ; then
     LOOKUP_browser "http://mid.gmane.org/${QUERY}"
-    ret=$?
+    ret="$?"
 else
     LOOKUP_browser "http://search.gmane.org/?query=${QUERY}&author=${author}&group=${group}&DEFAULTOP=${operation}&sort=${sort}"
-    ret=$?
+    ret="$?"
 fi
 return ${ret}
