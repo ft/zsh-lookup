@@ -35,7 +35,7 @@ function LOOKUP_help_${backend}() {
     printf ' %% lookup %s -1 openbsd\n' ${backend}
     printf ' %% zstyle '\'':lookup:*:%s:*'\'' use-first-hit true\n\n' ${backend}
 }
-LOOKUP_help ${backend} && return 0
+LOOKUP_help && return 0
 
 zparseopts -A opts -D 1 || return 1
 for opt in ${(k)opts} ; do
@@ -55,7 +55,7 @@ fi
 QUERY="$*"
 LOOKUP_query_handler || return 1
 if [[ -z ${QUERY} ]] ; then
-    LOOKUP_help_${backend}
+    LOOKUP_help -f
     return 1
 fi
 

@@ -76,7 +76,7 @@ function LOOKUP_help_${backend}() {
 
 # This call must be here, too. Just after you defined the help function.
 # It handles the global -h option of lookup correctly.
-LOOKUP_help ${backend} && return 0
+LOOKUP_help && return 0
 
 # This test is needed, too.
 # Backends are supposed to bring there own completion.
@@ -149,9 +149,8 @@ if [[ -z ${(Mk)supported_langs:#$lang} ]] ; then
     QUERY=''
 fi
 if [[ -z ${QUERY} ]] ; then
-    # Here you need to use LOOKUP_help_${backend} NOT LOOKUP_help ${backend}!
-    # Note the underscore! :)
-    LOOKUP_help_${backend}
+    # -f means, "display the help text, no matter what."
+    LOOKUP_help -f
     return 1
 fi
 

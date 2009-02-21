@@ -134,7 +134,7 @@ function LOOKUP_help_${backend}() {
     printf ' %% lookup %s -l C handle_keys\n' ${backend}
     printf ' %% lookup %s -L GPL -l C strlcpy\n\n' ${backend}
 }
-LOOKUP_help ${backend} && return 0
+LOOKUP_help && return 0
 
 if [[ -n ${lookup_complete} ]] ; then
 
@@ -179,7 +179,7 @@ zparseopts -A opts -D l: L: || return 1
 QUERY="$*"
 LOOKUP_query_handler || return 1
 if [[ -z ${QUERY} ]] ; then
-    LOOKUP_help_${backend}
+    LOOKUP_help -f
     return 1
 fi
 

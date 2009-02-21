@@ -39,7 +39,7 @@ function LOOKUP_help_${backend}() {
     printf ' %% lookup %s -m album Machine Head\n' ${backend}
     printf ' %% lookup %s -m song Paint it Black\n' ${backend}
 }
-LOOKUP_help ${backend} && return 0
+LOOKUP_help && return 0
 
 if [[ -n ${lookup_complete} ]] ; then
     LOOKUP_guard -fd __lookup_${backend}_supported_modes ||
@@ -79,7 +79,7 @@ if [[ -z ${(Mk)supported_modes:#$mode} ]] ; then
     QUERY=''
 fi
 if [[ -z ${QUERY} ]] ; then
-    LOOKUP_help_${backend}
+    LOOKUP_help -f
     return 1
 fi
 

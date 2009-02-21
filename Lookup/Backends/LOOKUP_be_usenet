@@ -42,7 +42,7 @@ function LOOKUP_help_${backend}() {
     printf ' %% lookup %s zsh prompt colours\n' ${backend}
     printf ' %% lookup %s -a pws Bugs in zsh\n\n' ${backend}
 }
-LOOKUP_help ${backend} && return 0
+LOOKUP_help && return 0
 
 if [[ -n ${lookup_complete} ]] ; then
     comp_args=(
@@ -88,7 +88,7 @@ if [[ -z ${(Mk)known_modes:#$mode} ]] ; then
     QUERY=''
 fi
 if [[ -z ${QUERY} ]] && [[ ${mode} != 'author' ]] ; then
-    LOOKUP_help_${backend}
+    LOOKUP_help -f
     return 1
 fi
 

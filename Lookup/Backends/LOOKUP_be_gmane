@@ -75,7 +75,7 @@ function LOOKUP_help_${backend}() {
     printf ' %% lookup %s -L -s openbsd\n' ${backend}
     #}}}
 }
-LOOKUP_help ${backend} && return 0
+LOOKUP_help && return 0
 
 if [[ -n ${lookup_complete} ]] ; then
     # gmane backend completion code {{{
@@ -177,11 +177,11 @@ if [[ -z ${QUERY} ]] &&
    ( [[ ${opts[-l]} == 'yes' ]] || [[ ${opts[-s]} == 'yes' ]] || [[ ${opts[-m]} == 'yes' ]] )
    then
 
-    LOOKUP_help_${backend}
+    LOOKUP_help -f
     return 1
 fi
 if [[ -z ${QUERY} ]] && [[ -z ${group} ]] && [[ -z ${author} ]] ; then
-    LOOKUP_help_${backend}
+    LOOKUP_help -f
     return 1
 fi
 

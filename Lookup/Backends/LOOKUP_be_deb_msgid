@@ -27,7 +27,7 @@ function LOOKUP_help_${backend}() {
     printf '\n[1] <http://www.debian.org>\n'
     printf '[2] <http://lists.debian.org>\n'
 }
-LOOKUP_help ${backend} && return 0
+LOOKUP_help && return 0
 
 if [[ -n ${lookup_complete} ]] ; then
     comp_args=(
@@ -54,7 +54,7 @@ zstyle -t "${lookup_context}" use-first-hit && end='/firsthit'
 QUERY="$*"
 LOOKUP_query_handler || return 1
 if [[ -z ${QUERY} ]] ; then
-    LOOKUP_help_${backend}
+    LOOKUP_help -f
     return 1
 fi
 
