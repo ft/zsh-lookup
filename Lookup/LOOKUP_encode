@@ -4,7 +4,7 @@
 LOOKUP_guard || return 1
 emulate -L zsh
 setopt extendedglob
-local input output
+local input output ws=$'\t '
 local -A opts
 
 zparseopts -A opts -D s q || return 1
@@ -19,16 +19,17 @@ if [[ ${opts[-q]} == 'yes' ]] ; then
     set -- "${QUERY}"
 fi
 
+input=( ${(s::)1} )
+output=${(j::)input/(#b)([^A-Za-z0-9_${ws}.!~*\'\(\)+-])/%${(l:2::0:)$(([##16]#match))}}
+
 if [[ ${opts[-s]} == 'yes' ]] ; then
-    local ws=$'\t '
-    input=${${1##[$ws]#}%%[$ws]#}
-    input=${input//[$ws]##/+}
+    output=${${output##[$ws]#}%%[$ws]#}
+    output="${output//+/%2B}"
+    output=${output//[$ws]##/+}
 else
-    input="$1"
+    output="${output//[$ws]/%20}"
 fi
 
-input=( ${(s::)input} )
-output=${(j::)input/(#b)([^A-Za-z0-9_.!~*\'\(\)+-])/%${(l:2::0:)$(([##16]#match))}}
 if [[ ${opts[-q]} == 'yes' ]] ; then
     QUERY=${output}
 else
