@@ -1,6 +1,27 @@
 ### vim:ft=zsh:foldmethod=marker
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 
+### Usage:
+##  Check if we're called from the lookup subsystem.
+#   This way you can guard your functions from being called by hand
+#   by the user. Every function in lookup should do this as soon as
+#   possible.
+#
+#       LOOKUP_guard || return 1
+#
+##  Check if a function is defined already.
+#   This is used to avoid nested functions to get defined over and
+#   over again. Everytime you introduce a function in a backend, you
+#   should use this idom. No matter if it's a helper function
+#   (LOOKU_beh_${backend}_my_helper) or the function, that prints
+#   the backend's documentation (LOOKUP_help_${backend}).
+#
+#       LOOKUP_guard -fd LOOKUP_help_${backend} ||
+#       function LOOKUP_help_${backend}() {
+#           LOOKUP_guard || return 1
+#           ...
+#       }
+
 local -i fail
 fail=1
 
