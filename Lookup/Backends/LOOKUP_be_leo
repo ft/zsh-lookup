@@ -176,7 +176,6 @@ fi
 # A sample hook call may look like this:
 #LOOKUP_hook "pre-encode" $QUERY $lang $interface_lang
 
-
 # Use LOOKUP_encode() for proper url encoding of the QUERY.
 # Since, QUERY is the most common use case of LOOKUP_encode, it has
 # a special option to handle that variable.

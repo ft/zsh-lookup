@@ -3,8 +3,8 @@
 ## zsh function that looks up an argument in various webservices.
 ## Copyright: 2009, Frank Terbeck <ft@bewatermyfriend.org>
 ##
-## This file, LOOKUP_browser, LOOKUP_encode and all backends in the Lookup/
-## subdirectory are distributed under the same licence as zsh itself (BSD-like).
+## This file, all LOOKUP_* files and all backends in the Backends/ subdirectory
+## are distributed under the same licence as zsh itself (BSD-like).
 ##
 
 # TODO: Write a yodl snippet for inclusion in zsh's contrib documentation.
