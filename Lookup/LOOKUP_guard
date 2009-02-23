@@ -26,6 +26,10 @@ local -i fail
 fail=1
 
 if [[ $1 == '-fd' ]] ; then
+    # This function cannot use LOOKUP_parseopts() because that function
+    # already uses LOOKUP_guard(). That would be an endless loop.
+    # Since this function does not alter any 'local -x' variables, it
+    # should be the one that doesn't require any other lookup() function.
     shift
     (( ${+functions[$1]} )) && return 0
     return 1

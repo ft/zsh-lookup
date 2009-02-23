@@ -18,26 +18,34 @@ function lookup() {
     setopt warncreateglobal
 
     local file opt
-    local -a opts
+    local -a backend_args
     local -A lu_aliases
 
     local -x backend lookup_describe lookup_qh_arg lookup_lp lookup_ei unencQUERY
     local -ix lookup_remote lookup_printout lookup_use_qh lookup_help
-    local -Ax lookup_communicate
+    local -ax args
+    local -Ax lookup_communicate lu_parseopts_args opts
 
+    backend='-init-'
     lookup_ei='-main-'
     lookup_help=0
     lookup_use_qh=0
     lookup_remote=0
     lookup_printout=0
-    zparseopts -A opts -D a: d: q: h i l L P Q R || return 1
-    if [[ $1 == -* ]] ; then
-        printf 'Unknown option: %s\n' "$1"
-        return 1
-    fi
-    for opt in ${(k)opts} ; do
-        [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
-    done
+
+    lu_parseopts_args=(
+        a   string
+        d   string
+        q   string
+        h   bool
+        i   bool
+        l   bool
+        L   bool
+        P   bool
+        Q   bool
+        R   bool
+    )
+    LOOKUP_parseopts "$@" || return 1
 
     if [[ -n ${opts[-l]} ]] ; then
         printf 'Available backends:\n\n'
@@ -122,7 +130,7 @@ function lookup() {
     [[ -n ${opts[-Q]} ]] && lookup_use_qh=1
     [[ -n ${opts[-q]} ]] && lookup_use_qh=1 && lookup_qh_arg=${opts[-q]}
 
-    if [[ -z $1 ]] || ( [[ $1 == -h ]] && (( argc == 1 )) ) ; then
+    if (( ${#args} == 0 )) ; then
         printf 'usage: lookup [-{i,a,d,Q,l,L,P,R}] [-{h,q} <arg>] <backend> OPTION(s)...\n'
         printf '  Options:\n'
         printf '    -h [backend] print this text or help for '\''backend'\''\n\n'
@@ -140,19 +148,22 @@ function lookup() {
         (( lookup_help > 0 )) && return 0 || return 1
     fi
 
-    backend=${${LOOKUP_aliases[$1]}:-$1}
+    backend=${${LOOKUP_aliases[${args[1]}]}:-${args[1]}}
 
     if [[ -z ${(M)LOOKUP_backends:#$backend} ]] ; then
         printf 'Unknown backend '\''%s'\''.\n' ${backend}
         return 1
     fi
 
-    shift
+    shift args
 
-    LOOKUP_hook -- "$@"
+    backend_args=( "${args[@]}" )
+    args=()
+    opts=()
+    LOOKUP_hook -- "${backend_args[@]}"
     lookup_ei='-backend-'
     LOOKUP_context -d
-    LOOKUP_be_${backend} "$@"
+    LOOKUP_be_${backend} "${backend_args[@]}"
     return $?
 }
 

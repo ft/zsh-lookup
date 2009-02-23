@@ -116,8 +116,12 @@ if [[ -n ${lookup_complete} ]] ; then
 fi
 
 # parse possible options of the backend.
-# 'zparseopts' is the recommended way of doing that.
-zparseopts -A opts -D 'l:' || return 1
+# 'LOOKUP_parseopts' is the recommended way of doing that.
+# See the top of that function's file for an explained example.
+# Since LOOKUP_parseopts() returns its findings via $opt[] and $args[], you
+# should *never* use variables of those names in your backends.
+lu_parseopts_args=( l string )
+LOOKUP_parseopts "$@" || return 1
 lang=${opts[-l]}
 
 # all configuration should be done via zstyle. The context should always be
@@ -130,7 +134,12 @@ fi
 zstyle -s "${lookup_context}" interface-lang interface_lang || interface_lang='en'
 
 # If applicable, use the remaining arguments as QUERY.
-QUERY="$*"
+# If the backend used LOOKUP_parseopts() before, the remaining arguments
+# are in $args[]. If not, they can be assigned like this:
+#   QUERY="$*"
+#
+# Since we do use LOOKUP_parseopts(), we'll do it like this:
+QUERY="${args[*]}"
 
 # Call LOOKUP_query_handler() to support the -Q and -q options of lookup.
 # This should also be called like this in every case, as this supports

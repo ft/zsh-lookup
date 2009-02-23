@@ -37,10 +37,8 @@ function LOOKUP_help_${backend}() {
 }
 LOOKUP_help && return 0
 
-zparseopts -A opts -D 1 || return 1
-for opt in ${(k)opts} ; do
-    [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
-done
+lu_parseopts_args=( 1 bool )
+LOOKUP_parseopts "$@" || return 1
 
 if [[ ${opts[-1]} == 'yes' ]] ||
    zstyle -t "${lookup_context}" use-first-hit ; then
@@ -52,7 +50,7 @@ else
     mode=''
 fi
 
-QUERY="$*"
+QUERY="${args[*]}"
 LOOKUP_query_handler || return 1
 if [[ -z ${QUERY} ]] ; then
     LOOKUP_help -f

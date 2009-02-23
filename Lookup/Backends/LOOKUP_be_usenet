@@ -61,10 +61,8 @@ local mode author
 local -A opts
 local -x QUERY
 
-zparseopts -A opts -D m a: t || return 1
-for opt in ${(k)opts} ; do
-    [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
-done
+lu_parseopts_args=( m bool t bool a string )
+LOOKUP_parseopts "$@" || return 1
 [[ ${opts[-t]} == 'yes' ]] && mode='text'
 [[ ${opts[-m]} == 'yes' ]] && mode='msgid'
 if [[ -n ${opts[-a]} ]] ; then
@@ -81,7 +79,7 @@ if [[ -z ${mode} ]] ; then
     fi
 fi
 
-QUERY="$*"
+QUERY="${args[*]}"
 LOOKUP_query_handler || return 1
 if [[ -z ${(Mk)known_modes:#$mode} ]] ; then
     printf 'Unknown mode: '\''%s'\''.\n\n' ${mode}

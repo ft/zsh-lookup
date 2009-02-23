@@ -44,14 +44,12 @@ local end
 local -A opts
 local -x QUERY
 
-zparseopts -A opts -D '1' || return 1
-for opt in ${(k)opts} ; do
-    [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
-done
+lu_parseopts_args=( 1 bool )
+LOOKUP_parseopts "$@" || return 1
 [[ ${opts[-1]} == 'yes' ]] && end='/firsthit' || end='/links'
 zstyle -t "${lookup_context}" use-first-hit && end='/firsthit'
 
-QUERY="$*"
+QUERY="${args[*]}"
 LOOKUP_query_handler || return 1
 if [[ -z ${QUERY} ]] ; then
     LOOKUP_help -f

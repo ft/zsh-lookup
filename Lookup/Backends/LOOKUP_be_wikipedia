@@ -99,10 +99,11 @@ local -x QUERY
 
 zstyle -s "${lookup_context}" default-location loc || loc='en'
 
-zparseopts -A opts -D l: || return 1
+lu_parseopts_args=( l string )
+LOOKUP_parseopts "$@" || return 1
 [[ -n ${opts[-l]} ]] && loc="${opts[-l]}"
 
-QUERY="$*"
+QUERY="${args[*]}"
 LOOKUP_query_handler || return 1
 if [[ -z ${QUERY} ]] ; then
     LOOKUP_help -f

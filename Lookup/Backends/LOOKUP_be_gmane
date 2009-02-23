@@ -142,10 +142,18 @@ zstyle -s "${lookup_context}" default-sort sort         || sort='relevance'
 zstyle -s "${lookup_context}" default-oper operation    || operation='and'
 
 # parse options
-zparseopts -A opts -D l s B L m a: g: o: S: || return 1
-for opt in ${(k)opts} ; do
-    [[ -z ${opts[$opt]} ]] && opts[$opt]='yes'
-done
+lu_parseopts_args=(
+    l   bool
+    m   bool
+    s   bool
+    B   bool
+    L   bool
+    a   string
+    g   string
+    o   string
+    S   string
+)
+LOOKUP_parseopts "$@" || return 1
 [[ -n ${opts[-a]} ]] && author="$(LOOKUP_encode ${opts[-a]})"
 [[ -n ${opts[-g]} ]] && group="$(LOOKUP_encode ${opts[-g]})"
 [[ -n ${opts[-o]} ]] && operation="${opts[-o]}"
@@ -154,7 +162,7 @@ done
 [[ -n ${opts[-B]} ]] && list_mode=''
 
 # set QUERY and export parameters for query handlers via $lookup_communicate[]
-QUERY="$*"
+QUERY="${args[*]}"
 lookup_communicate[author]="${author}"
 lookup_communicate[group]="${group}"
 lookup_communicate[operation]="${operation}"
