@@ -1,3 +1,4 @@
+
 texinode(Command Line)(World Wide Web)(Utilities)(User Contributions)
 sect(World Wide Web Services for Zsh)
 cindex(world wide web services)
@@ -48,3 +49,5 @@ subsect(Examples)
 
 Terrific exacmple:
 example(lookup ...)
+
+
