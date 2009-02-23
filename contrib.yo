@@ -66,6 +66,34 @@ enditem()
 
 subsect(Quickstart)
 
+This section is for people who do not want to setup the lookup system on
+their own:
+
+example(
+zstyle ':lookup:*' txt_browser 'w3m'
+zstyle ':lookup:*' txt_formats '%s'
+zstyle ':lookup:*' gui_browser 'firefox'
+zstyle ':lookup:*' gui_formats '-remote' 'openurl(%s)'
+zstyle ':lookup:*' use-pager   true
+zstyle ':lookup:*' pager-auto  true
+zstyle ':lookup:*' pager       'less -M'
+)
+
+If you want to use other browsers, you'll figure it out form here.
+
+Now to find out what backends there are, do:
+
+example(lookup -l)
+
+To get documentation for a backend do (the tt(gmane) backend here):
+
+example(lookup -h gmane)
+
+Feel free to use tt(lu) instead of tt(lookup) to avoid a lot of typing.
+So, if you want to "google" for tt(zsh), do:
+
+example(lu google zsh)
+
 subsect(Configuration)
 
 The var(lookup) feature is primarily configured via var(zstyle).
