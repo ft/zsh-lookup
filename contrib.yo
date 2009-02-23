@@ -3,9 +3,66 @@ texinode(Command Line)(World Wide Web)(Utilities)(User Contributions)
 sect(World Wide Web Services for Zsh)
 cindex(world wide web services)
 
-    --- Overview ---
+Loading this subsystem enables the user to access useful webservices
+(such as tt(google), tt(gmane), tt(wikipedia) and many more) via the
+command line.
 
-example(usage: lookup [GLOBAL-OPTION(s)...] <backend> OPTION(s)...)
+In order to load and initialize the system, you need a issue the following
+command:
+
+example(autoload -Uz lookupinit && lookupinit)
+
+After that, a function called tt(lookup) is available. Its basic syntax
+is as follows:
+
+example(lookup [GLOBAL-OPTION(s)...] <backend> OPTION(s)...)
+
+tt(<backend>) is a string describing the service that will be accessed.
+Backends are self-documenting. To access a backend's documentation, use
+tt(lookup)'s var(-h) global-option as described below.
+
+startitem()
+item(tt(-h [backend]))(
+Print a help message.
+
+If tt([backend]) is defined, it will display the self-documentation of
+the named backend.
+)
+item(tt(-i))(
+(Re)initialize the lookup subsystem.
+
+This is usually not required (unless you add new backends at runtime).
+)
+item(tt(-a <alias-definition>))(
+Add a backend alias.
+
+tt(<alias-definition>) has this format: var(alias-identifier=backend-name).
+)
+item(tt(-d <alias-identifier>))(
+Remove the backend alias named tt(<alias-identifier>).
+)
+item(tt(-Q))(
+Let a handler function create the QUERY string.
+
+See var(Query Handlers) below.
+)
+item(tt(-q <argument>))(
+same as tt(-Q), but let's you give an argument for the handler function,
+too.
+)
+item(tt(-l))(
+List available backends.
+)
+item(tt(-L))(
+List defined backend aliases.
+)
+item(tt(-P))(
+Print which browser command would be used instead of actually executing it.
+)
+item(tt(-R))(
+Send url to remote (GUI) browser (like firefox).
+)
+enditem()
 
 subsect(Quickstart)
 
