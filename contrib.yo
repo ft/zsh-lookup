@@ -204,11 +204,119 @@ enditem()
 
 subsect(Query Handlers)
 
+tt(Query Handlers) can be used to automate the generation and changing of
+queries. Usually, after all option parsing is done, the remaining arguments
+to a backend are copied into the tt(QUERY) variable, concatenating them by
+single spaces.
+
+This tt(QUERY) variable is a global parameter to the var(lookup) system,
+so that you may change it in query handlers and the caller will used the
+changed variable.
+
+Such a handler itself is just a shell function named var(LOOKUP_qh_)tt(name),
+where tt(name) is the name of the handler which you use in the
+var(query-handlers) style.
+
+The var(<execution-identifier>) part of the zstyle context used in such
+handlers is var(-queryhandler-) (this is only important if you want to
+make your handlers configurable by zstyle).
+
+The tt(Examples) section below has an example of how to automate queries
+using such a handler.
+
 subsect(Hooks)
 
 subsect(Examples)
 
-Terrific example:
-example(lookup ...)
+Basic calls:
+example(lookup google zsh)
+example(lookup deb_bts -p zsh)
+
+Calls using the shorter tt(lu):
+example(lu google zsh)
+example(lu usenet zsh)
+
+Example backend aliases:
+example(lu -a s=google)
+example(lu -a d=leo)
+example(lu -a z=zsh_mla)
+
+And use those aliases:
+example(lu s zsh compsys)
+example(lu d sugar)
+example(lu z -w 12345)
+
+Setup firefox as your "remote" GUI browser:
+example(
+zstyle ':lookup:*' gui_browser 'firefox'
+zstyle ':lookup:*' gui_formats '-remote' 'openurl+LPAR()%s+RPAR()'
+)
+
+Do the same for opera:
+example(
+zstyle ':lookup:*' gui_browser 'opera'
+zstyle ':lookup:*' gui_formats '-newtab' '-remote' 'openURL+LPAR()%s+RPAR()'
+)
+
+And finally an example for var(Query Handlers):
+
+Let's assume, you have a command that queries your music player as to which
+Song is currently playing, in one of the following formats:
+
+example(Artist - Album - Track)
+example(Artist - Track)
+
+I happen to have such a program called tt(cmus-rstat.sh). If the player is
+stopped is displays: tt([cmus]: -stopped-)
+
+Now wouldn't it be convenient if we could use such information in order to
+make queries with the tt(letssingit) backend (which queries
+var(www.letssingit.com))? It would and the following does:
+
+example(
+zstyle ':lookup:*:letssingit:*' query-handlers letssingit
+function LOOKUP_qh_letssingit() {
+    local mode=${lookup_communicate[mode]}
+    local np
+
+    case ${mode} in
+    (artist|album|song)
+        np="$(cmus-rstat.sh)"
+        np=${np/np: /}
+        if [[ ${np} == '[cmus]: -stopped-' ]] ; then
+            printf '\n  Cmus is currently playing nothing!\n\n'
+            return 3
+        fi
+        ;;
+    esac
+
+    case ${mode} in
+    (artist)
+        QUERY=${np%% - *}
+        ;;
+    (album)
+        np=${np% - *}
+        if [[ ${np} == *' - '* ]] ; then
+            QUERY=${np#* - }
+        else
+            printf '\n Could not get album (%s)!\n\n' "$(cmus-rstat.sh)"
+            return 3
+        fi
+        ;;
+    (song)
+        QUERY=${np##* - }
+        ;;
+    esac
+
+    return 0
+}
+)
+
+Now, to search for the lyrics of the currently running song, you can do
+this:
+example(lu -Q letssingit -m song)
+
+You can use tt(-m artist) or tt(-m album) in order to search for lyrics
+of the currently playing artist or album, too.
 
 
