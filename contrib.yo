@@ -283,8 +283,8 @@ And finally an example for var(Query Handlers):
 Let's assume, you have a command that queries your music player as to which
 Song is currently playing, in one of the following formats:
 
-example(Artist - Album - Track)
-example(Artist - Track)
+example(np: Artist - Album - Track)
+example(np: Artist - Track)
 
 Let's further assume such a program is called tt(cmus-rstat.sh). If the
 player is stopped is displays: tt([cmus]: -stopped-)
@@ -295,7 +295,7 @@ var(www.letssingit.com))? It would and the following does:
 
 example(
 zstyle ':lookup:*:letssingit:*' query-handlers letssingit
-function LOOKUP_qh_letssingit+LPAR(+RPAR) {
+function LOOKUP_qh_letssingit+LPAR()+RPAR() {
     local mode=${lookup_communicate[mode]}
     local np
     case ${mode} in
