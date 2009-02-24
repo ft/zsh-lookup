@@ -22,11 +22,11 @@ if (( lookup_printout > 0 )) || zstyle -t "${lookup_context}" debug ; then
 fi
 
 if (( lookup_remote > 0 )) ; then
-    zstyle -s "${lookup_context}" gui_browser lookup_browser
-    zstyle -a "${lookup_context}" gui_formats lookup_browser_args
+    zstyle -s "${lookup_context}" gui-browser lookup_browser
+    zstyle -a "${lookup_context}" gui-formats lookup_browser_args
 else
-    zstyle -s "${lookup_context}" txt_browser lookup_browser
-    zstyle -a "${lookup_context}" txt_formats lookup_browser_args
+    zstyle -s "${lookup_context}" txt-browser lookup_browser
+    zstyle -a "${lookup_context}" txt-formats lookup_browser_args
 fi
 
 [[ -z ${lookup_browser} ]] && lookup_browser=${BROWSER:-w3m}
