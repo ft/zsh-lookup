@@ -275,7 +275,7 @@ var(www.letssingit.com))? It would and the following does:
 
 example(
 zstyle ':lookup:*:letssingit:*' query-handlers letssingit
-function LOOKUP_qh_letssingit() {
+function LOOKUP_qh_letssingit+LPAR(+RPAR) {
     local mode=${lookup_communicate[mode]}
     local np
 
