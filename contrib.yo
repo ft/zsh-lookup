@@ -107,22 +107,98 @@ example(:lookup:<execution-ident>:<backend>:<local-part>)
 startitem()
 item(tt(<executing-ident>))(
 Is an identifier for the code region a style is looked up. Valid strings
-are: tt(-main-), tt(-backend-), tt(-queryhandler-) and tt(-browser-).
-These are provided for maximum control of the context. Usually using tt(*)
-for this field will be good enough.
+are: tt(-main-), tt(-backend-), tt(-queryhandler-), tt(-hook-) and
+tt(-browser-). These are provided for maximum control of the context.
+Usually using tt(*) for this field will be good enough.
 )
 item(tt(<backend>))(
 Is the backend in question. Find out about valid strings via:
 tt(lookup -l).
 )
+item(tt(<local-part>))(
+Usually, this is set to var(-default-). Backends may set this to another
+value, though (the var(rfc) backend does, for example). See the backend's
+documentation for details.
+)
 enditem()
 
-This is a description of all styles that are looked up.
+This is a description of all styles that are looked up by the main system
+itself. Backends do look up other styles as well; they are described in
+the backend's self-documentation.
 
 startitem()
-kindex(A-STYLE)
-item(tt(A-STYLE))(
-    --- DESCRIPTION ---
+kindex(debug)
+item(tt(debug))(
+When set, var(lookup) will print some debugging information to stdout
+and it only prints out what command if would run instead o actually running
+it (the latter has the same effect as the tt(-P) option).
+[Type: tt(boolean); Default: tt(false)]
+)
+kindex(txt-browser)
+item(tt(txt-browser))(
+This sets up the text based browser, which var(lookup) will call to access
+a web service. [Type: tt(string); Default: tt($BROWSER), if that is unset:
+tt(w3m)]
+)
+kindex(txt-formats)
+item(tt(txt-formats))(
+A list of arguments that is passed to the text based browser. Within these
+arguments the string tt(%s) is replaced by the URL that the browser should
+open. [Type: tt(string); Default: tt(%s)]
+)
+kindex(gui-browser)
+item(tt(gui-browser))(
+This is the "remote" GUI browser, which is called when the tt(-R) option of
+var(lookup) is used. The default is the same as for the text based browser.
+
+Thus, for making use of the tt(-R) option you will have to set up this style
+and possibly the var(txt-formats) style (See below, and Examples).
+[Type: tt(string); Default: var(see txt-browser)]
+)
+kindex(gui-formats)
+item(tt(gui-formats))(
+A list of arguments that is passed to the "remote" GUI browser. Within these
+arguments the string tt(%s) is replaced by the URL that the browser should
+open. [Type: tt(string); Default: var(see txt-formats)]
+)
+kindex(use-pager)
+item(tt(use-pager))(
+When displaying a backend's self-documentation, you may want to read that
+text in a pager because the text may be too long for your terminal.
+
+Setting this style will always put the help text into a pager (unless
+var(pager-auto) is set, too). [Type: tt(boolean); Default: tt(false)]
+)
+kindex(pager-auto)
+item(tt(pager-auto))(
+If set, a pager is only used to display help-texts if the text would not
+fit on the screen (see var(prompt-height) below). This has no effect
+if var(use-pager) is not set to true. [Type: tt(boolean);
+Default: tt(false)]
+)
+kindex(pager)
+item(tt(pager))(
+The pager to use for displaying help texts. [Type: tt(string);
+Default: tt($PAGER), if that is unset: tt(more)]
+)
+kindex(prompt-height)
+item(tt(prompt-height))(
+This is the height of the prompt assumed when calculating whether to use
+a pager when var(pager-auto) is set. [Type: tt(integer); Default: tt(1)]
+)
+kindex(query-handlers)
+item(tt(query-handlers))(
+A list of handlers, that may be used to alter (and possibly generate) a
+query for a web service. See tt(Query Handlers) and tt(Examples) below.
+[Type: tt(list); Default: tt(empty)]
+)
+kindex(hooks)
+item(tt(hooks))(
+A list of functions to run at a certain time. There is one hook type
+directly before a backend is run; and one that is run directly after
+a backend ran and a browser is to be spawned. (If a backend runs other
+hooks, it will document those itself). See tt(Hooks) below.
+[Type: tt(list); Default: tt(empty)]
 )
 enditem()
 
@@ -132,7 +208,7 @@ subsect(Hooks)
 
 subsect(Examples)
 
-Terrific exacmple:
+Terrific example:
 example(lookup ...)
 
 
