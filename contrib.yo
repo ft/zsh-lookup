@@ -15,7 +15,7 @@ example(autoload -Uz lookupinit && lookupinit)
 After that, a function called tt(lookup) is available. Its basic syntax
 is as follows:
 
-example(lookup [GLOBAL-OPTION(s)...] <backend> OPTION(s)...)
+example(lookup [GLOBAL-OPTION+LPAR()s+RPAR()...] <backend> OPTION+LPAR()s+RPAR()...)
 
 tt(<backend>) is a string describing the service that will be accessed.
 Backends are self-documenting. To access a backend's documentation, use
@@ -73,7 +73,7 @@ example(
 zstyle ':lookup:*' txt_browser 'w3m'
 zstyle ':lookup:*' txt_formats '%s'
 zstyle ':lookup:*' gui_browser 'firefox'
-zstyle ':lookup:*' gui_formats '-remote' 'openurl(%s)'
+zstyle ':lookup:*' gui_formats '-remote' 'openurl+LPAR()%s+RPAR()'
 zstyle ':lookup:*' use-pager   true
 zstyle ':lookup:*' pager-auto  true
 zstyle ':lookup:*' pager       'less -M'
