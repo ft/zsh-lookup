@@ -247,16 +247,12 @@ example(lu d sugar)
 example(lu z -w 12345)
 
 Setup firefox as your "remote" GUI browser:
-example(
-zstyle ':lookup:*' gui-browser 'firefox'
-zstyle ':lookup:*' gui-formats '-remote' 'openurl+LPAR()%s+RPAR()'
-)
+example(zstyle ':lookup:*' gui-browser 'firefox'
+zstyle ':lookup:*' gui-formats '-remote' 'openurl+LPAR()%s+RPAR()')
 
 Do the same for opera:
-example(
-zstyle ':lookup:*' gui-browser 'opera'
-zstyle ':lookup:*' gui-formats '-newtab' '-remote' 'openURL+LPAR()%s+RPAR()'
-)
+example(zstyle ':lookup:*' gui-browser 'opera'
+zstyle ':lookup:*' gui-formats '-newtab' '-remote' 'openURL+LPAR()%s+RPAR()')
 
 And finally an example for var(Query Handlers):
 
