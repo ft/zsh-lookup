@@ -286,8 +286,8 @@ Song is currently playing, in one of the following formats:
 example(Artist - Album - Track)
 example(Artist - Track)
 
-I happen to have such a program called tt(cmus-rstat.sh). If the player is
-stopped is displays: tt([cmus]: -stopped-)
+Let's further assume such a program is called tt(cmus-rstat.sh). If the
+player is stopped is displays: tt([cmus]: -stopped-)
 
 Now wouldn't it be convenient if we could use such information in order to
 make queries with the tt(letssingit) backend (which queries
