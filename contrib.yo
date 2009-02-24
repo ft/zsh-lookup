@@ -278,7 +278,6 @@ zstyle ':lookup:*:letssingit:*' query-handlers letssingit
 function LOOKUP_qh_letssingit+LPAR(+RPAR) {
     local mode=${lookup_communicate[mode]}
     local np
-
     case ${mode} in
     (artist|album|song)
         np="$(cmus-rstat.sh)"
@@ -289,7 +288,6 @@ function LOOKUP_qh_letssingit+LPAR(+RPAR) {
         fi
         ;;
     esac
-
     case ${mode} in
     (artist)
         QUERY=${np%% - *}
@@ -307,7 +305,6 @@ function LOOKUP_qh_letssingit+LPAR(+RPAR) {
         QUERY=${np##* - }
         ;;
     esac
-
     return 0
 }
 )
