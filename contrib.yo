@@ -70,10 +70,10 @@ This section is for people who do not want to setup the lookup system on
 their own:
 
 example(
-zstyle ':lookup:*' txt_browser 'w3m'
-zstyle ':lookup:*' txt_formats '%s'
-zstyle ':lookup:*' gui_browser 'firefox'
-zstyle ':lookup:*' gui_formats '-remote' 'openurl+LPAR()%s+RPAR()'
+zstyle ':lookup:*' txt-browser 'w3m'
+zstyle ':lookup:*' txt-formats '%s'
+zstyle ':lookup:*' gui-browser 'firefox'
+zstyle ':lookup:*' gui-formats '-remote' 'openurl+LPAR()%s+RPAR()'
 zstyle ':lookup:*' use-pager   true
 zstyle ':lookup:*' pager-auto  true
 zstyle ':lookup:*' pager       'less -M'
@@ -248,14 +248,14 @@ example(lu z -w 12345)
 
 Setup firefox as your "remote" GUI browser:
 example(
-zstyle ':lookup:*' gui_browser 'firefox'
-zstyle ':lookup:*' gui_formats '-remote' 'openurl+LPAR()%s+RPAR()'
+zstyle ':lookup:*' gui-browser 'firefox'
+zstyle ':lookup:*' gui-formats '-remote' 'openurl+LPAR()%s+RPAR()'
 )
 
 Do the same for opera:
 example(
-zstyle ':lookup:*' gui_browser 'opera'
-zstyle ':lookup:*' gui_formats '-newtab' '-remote' 'openURL+LPAR()%s+RPAR()'
+zstyle ':lookup:*' gui-browser 'opera'
+zstyle ':lookup:*' gui-formats '-newtab' '-remote' 'openURL+LPAR()%s+RPAR()'
 )
 
 And finally an example for var(Query Handlers):
