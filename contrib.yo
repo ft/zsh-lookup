@@ -226,6 +226,30 @@ using such a handler.
 
 subsect(Hooks)
 
+The basic lookup system (backends may run their own hooks, which they
+will document themselves if they do) runs two hooks: One var(before) a
+backend is run, the other var(after) a backend was run, var(before)
+the browser is spawned.
+
+The hook list for the former is looked up in the
+var(:lookup:-main-:)tt(<backend>)var(:-default-) context, for the latter
+in the var(:lookup:-browser-:)tt(<backend>)var(:-default-) context.
+
+In contrast to query handlers the name of a hook in the zstyle list
+is the same as the functions that is called. The following arguments are
+provided to these functions: In the var(-main-) context: the same arguments
+that are passed to the backend. In the var(-browser-) context: the same
+URL that is handed over to the browser.
+
+There is a special variable var(unencQUERY) that is available in hooks
+in the var(-browser-) context. It contains the unencoded query string.
+With that the var(-browser-) hooks can be used to set xterm or GNU screen
+titles.
+
+The var(<execution-identifier>) part of the zstyle context used in
+hooks is var(-hook-) (this is only important if you want to make your
+hooks configurable by zstyle).
+
 subsect(Examples)
 
 Basic calls:

@@ -23,7 +23,7 @@ old_lookup_ei=${lookup_ei}
 lookup_ei='-hook-'
 for hook in ${hooks} ; do
     (( ${+functions[$hook]} == 0 )) && continue
-    ${hook}
+    ${hook} "$@"
     case $? in
         (1)
             break
