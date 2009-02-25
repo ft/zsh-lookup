@@ -90,7 +90,7 @@ To get documentation for a backend do (the tt(gmane) backend here):
 example(lookup -h gmane)
 
 Feel free to use tt(lu) instead of tt(lookup) to avoid a lot of typing.
-So, if you want to "google" for tt(zsh), do:
+So, if you want to search the web via google.com for tt(zsh), do:
 
 example(lu google zsh)
 
