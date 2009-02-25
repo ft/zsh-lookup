@@ -36,7 +36,7 @@
 LOOKUP_guard || return 1
 
 local char o dashdash firstarg who
-local -a largs
+local -a largs match
 
 if [[ ${lookup_ei} == '-backend-' ]] ; then
     who="${backend}"
