@@ -177,5 +177,5 @@ function lu() {
 }
 
 # initialize the system
-autoload -Uz LOOKUP_parseopts   # lookup -i needs this
+autoload -Uz LOOKUP_parseopts LOOKUP_guard  # lookup -i needs this
 lookup -i
