@@ -80,7 +80,7 @@ zstyle ':lookup:*' pager-auto  true
 zstyle ':lookup:*' pager       'less -M'
 )
 
-If you want to use other browsers, you'll figure it out form here.
+If you want to use other browsers, you'll figure it out from here.
 
 Now to find out what backends there are, do:
 
