@@ -7,8 +7,6 @@
 ## are distributed under the same licence as zsh itself (BSD-like).
 ##
 
-# TODO: Write a yodl snippet for inclusion in zsh's contrib documentation.
-
 typeset -ga LOOKUP_backends
 typeset -gA LOOKUP_aliases
 
@@ -18,7 +16,7 @@ function lookup() {
     setopt warncreateglobal
 
     local file opt
-    local -a backend_args
+    local -a alias_words backend_args
     local -A lu_aliases
 
     local -x backend lookup_describe lookup_qh_arg lookup_lp lookup_ei unencQUERY
@@ -105,7 +103,7 @@ function lookup() {
         al="${match[1]}"
         val="${match[2]}"
         if [[ -z ${al} ]] || [[ -z ${val} ]] ; then
-            printf 'An alias definition *must* look like this: aliasname=originalname\n'
+            printf 'An alias definition *must* look like this: aliasname="originalname -options"\n'
             return 1
         fi
 
@@ -148,16 +146,24 @@ function lookup() {
         (( lookup_help > 0 )) && return 0 || return 1
     fi
 
-    backend=${${LOOKUP_aliases[${args[1]}]}:-${args[1]}}
+    if (( ${+LOOKUP_aliases[${args[1]}]} )) ; then
+        alias_words=( ${(z)${LOOKUP_aliases[${args[1]}]}} )
+        shift args
+        backend=${alias_words[1]}
+        shift alias_words
+        backend_args=( "${alias_words[@]}" "${args[@]}" )
+        print ${#backend_args}
+    else
+        backend=${args[1]}
+        shift args
+        backend_args=( "${args[@]}" )
+    fi
 
     if [[ -z ${(M)LOOKUP_backends:#$backend} ]] ; then
         printf 'Unknown backend '\''%s'\''.\n' ${backend}
         return 1
     fi
 
-    shift args
-
-    backend_args=( "${args[@]}" )
     args=()
     opts=()
     LOOKUP_hook -- "${backend_args[@]}"

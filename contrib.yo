@@ -36,7 +36,8 @@ This is usually not required (unless you add new backends at runtime).
 item(tt(-a <alias-definition>))(
 Add a backend alias.
 
-tt(<alias-definition>) has this format: var(alias-identifier=backend-name).
+tt(<alias-definition>) has this format: var(alias-identifier="backend-name
+-options").
 )
 item(tt(-d <alias-identifier>))(
 Remove the backend alias named tt(<alias-identifier>).
@@ -264,11 +265,13 @@ Example backend aliases:
 example(lu -a s=google)
 example(lu -a d=leo)
 example(lu -a z=zsh_mla)
+example(lu -a wd="wikipedia -l de")
 
 And use those aliases:
 example(lu s zsh compsys)
 example(lu d sugar)
 example(lu z -w 12345)
+example(lu wd zsh)
 
 Setup firefox as your "remote" GUI browser:
 example(zstyle ':lookup:*' gui-browser 'firefox'
