@@ -152,7 +152,6 @@ function lookup() {
         backend=${alias_words[1]}
         shift alias_words
         backend_args=( "${alias_words[@]}" "${args[@]}" )
-        print ${#backend_args}
     else
         backend=${args[1]}
         shift args
