@@ -4,13 +4,13 @@
 
 LOOKUP_guard || return 1
 [[ -n ${lookup_describe} ]] &&
-    printf '%s' 'search for datasheets via search.cpan.org' && return 0
+    printf '%s' 'search CPAN via search.cpan.org' && return 0
 
 LOOKUP_guard -fd LOOKUP_help_${backend} ||
 function LOOKUP_help_${backend}() {
     LOOKUP_guard || return 1
     printf 'usage: %s <query>\n' ${backend}
-    printf '\n Searches for datasheets via search.cpan.org.\n'
+    printf '\n Searches CPAN via search.cpan.org.\n'
     printf '\nExamples:\n'
     printf ' %% lookup %s Audio::Scan\n' ${backend}
 }
