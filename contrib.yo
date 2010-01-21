@@ -107,8 +107,8 @@ example(:lookup:<execution-ident>:<backend>:<local-part>)
 
 startitem()
 item(tt(<executing-ident>))(
-Is an identifier for the code region a style is looked up. Valid strings
-are: tt(-main-), tt(-backend-), tt(-queryhandler-), tt(-hook-) and
+Is an identifier for the code region in which a style is looked up. Valid
+strings are: tt(-main-), tt(-backend-), tt(-queryhandler-), tt(-hook-) and
 tt(-browser-). These are provided for maximum control of the context.
 Usually using tt(*) for this field will be good enough.
 )
