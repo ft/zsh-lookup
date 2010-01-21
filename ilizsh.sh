@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd /usr/src/zsh.git
+cd /usr/src/sys/zsh.git
 git checkout master
 git clean -x -d -f
 git branch -D zsh-lookup
