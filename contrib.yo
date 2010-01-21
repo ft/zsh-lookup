@@ -7,7 +7,7 @@ Loading this subsystem enables the user to access useful webservices
 (such as tt(google), tt(gmane), tt(wikipedia) and many more) via the
 command line.
 
-In order to load and initialize the system, you need a issue the following
+In order to load and initialize the system, you need to issue the following
 command:
 
 example(autoload -Uz lookupinit && lookupinit)
@@ -19,7 +19,7 @@ example(lookup [GLOBAL-OPTION+LPAR()s+RPAR()...] <backend> OPTION+LPAR()s+RPAR()
 
 tt(<backend>) is a string describing the service that will be accessed.
 Backends are self-documenting. To access a backend's documentation, use
-tt(lookup)'s var(-h) global-option as described below.
+tt(lookup)'s var(-h) global option as described below.
 
 startitem()
 item(tt(-h [backend]))(
@@ -48,7 +48,7 @@ Let a handler function create the QUERY string.
 See var(Query Handlers) below.
 )
 item(tt(-q <argument>))(
-same as tt(-Q), but let's you give an argument for the handler function,
+same as tt(-Q), but lets you give an argument for the handler function,
 too.
 )
 item(tt(-l))(
@@ -61,7 +61,7 @@ item(tt(-P))(
 Print which browser command would be used instead of actually executing it.
 )
 item(tt(-R))(
-Send url to remote (GUI) browser (like firefox).
+Send url to remote (GUI) browser (like Firefox).
 )
 enditem()
 
@@ -131,7 +131,7 @@ startitem()
 kindex(debug)
 item(tt(debug))(
 When set, var(lookup) will print some debugging information to stdout
-and it only prints out what command if would run instead o actually running
+and it only prints out what command it would run instead of actually running
 it (the latter has the same effect as the tt(-P) option).
 [Type: tt(boolean); Default: tt(false)]
 )
@@ -143,14 +143,14 @@ tt(w3m)]
 )
 kindex(txt-formats)
 item(tt(txt-formats))(
-A list of arguments that is passed to the text based browser. Within these
+A list of arguments that is passed to the text-based browser. Within these
 arguments the string tt(%s) is replaced by the URL that the browser should
 open. [Type: tt(string); Default: tt(%s)]
 )
 kindex(gui-browser)
 item(tt(gui-browser))(
 This is the "remote" GUI browser, which is called when the tt(-R) option of
-var(lookup) is used. The default is the same as for the text based browser.
+var(lookup) is used. The default is the same as for the text-based browser.
 
 Thus, for making use of the tt(-R) option you will have to set up this style
 and possibly the var(txt-formats) style (See below, and Examples).
@@ -172,7 +172,7 @@ var(pager-auto) is set, too). [Type: tt(boolean); Default: tt(false)]
 )
 kindex(pager-auto)
 item(tt(pager-auto))(
-If set, a pager is only used to display help-texts if the text would not
+If set, a pager is only used to display help texts if the text would not
 fit on the screen (see var(prompt-height) below). This has no effect
 if var(use-pager) is not set to true. [Type: tt(boolean);
 Default: tt(false)]
@@ -189,7 +189,7 @@ a pager when var(pager-auto) is set. [Type: tt(integer); Default: tt(1)]
 )
 kindex(query-handlers)
 item(tt(query-handlers))(
-A list of handlers, that may be used to alter (and possibly generate) a
+A list of handlers that may be used to alter (and possibly generate) a
 query for a web service. See tt(Query Handlers) and tt(Examples) below.
 [Type: tt(list); Default: tt(empty)]
 )
@@ -207,11 +207,10 @@ subsect(Query Handlers)
 
 tt(Query Handlers) can be used to automate the generation and changing of
 queries. Usually, after all option parsing is done, the remaining arguments
-to a backend are copied into the tt(QUERY) variable, concatenating them by
-single spaces.
+to a backend are copied into the tt(QUERY) variable, joined by single spaces.
 
 This tt(QUERY) variable is a global parameter to the var(lookup) system,
-so that you may change it in query handlers and the caller will used the
+so that you may change it in query handlers and the caller will use the
 changed variable.
 
 Such a handler itself is just a shell function named var(LOOKUP_qh_)tt(name),
@@ -237,7 +236,7 @@ var(:lookup:-main-:)tt(<backend>)var(:-default-) context, for the latter
 in the var(:lookup:-browser-:)tt(<backend>)var(:-default-) context.
 
 In contrast to query handlers the name of a hook in the zstyle list
-is the same as the functions that is called. The following arguments are
+is the same as the functions which it called. The following arguments are
 provided to these functions: In the var(-main-) context: the same arguments
 that are passed to the backend. In the var(-browser-) context: the same
 URL that is handed over to the browser.
@@ -273,18 +272,18 @@ example(lu d sugar)
 example(lu z -w 12345)
 example(lu wd zsh)
 
-Setup firefox as your "remote" GUI browser:
+Setup Firefox as your "remote" GUI browser:
 example(zstyle ':lookup:*' gui-browser 'firefox'
 zstyle ':lookup:*' gui-formats '-remote' 'openurl+LPAR()%s+RPAR()')
 
-Do the same for opera:
+Do the same for Opera:
 example(zstyle ':lookup:*' gui-browser 'opera'
 zstyle ':lookup:*' gui-formats '-newtab' '-remote' 'openURL+LPAR()%s+RPAR()')
 
 And finally an example for var(Query Handlers):
 
 Let's assume, you have a command that queries your music player as to which
-Song is currently playing, in one of the following formats:
+song is currently playing, in one of the following formats:
 
 example(np: Artist - Album - Track)
 example(np: Artist - Track)
@@ -294,7 +293,7 @@ player is stopped is displays: tt(-stopped-)
 
 Now wouldn't it be convenient if we could use such information in order to
 make queries with the tt(letssingit) backend (which queries
-var(www.letssingit.com))? It would and the following does:
+var(www.letssingit.com))? It certainly would and the following does it:
 
 example(
 zstyle ':lookup:*:letssingit:*' query-handlers letssingit
