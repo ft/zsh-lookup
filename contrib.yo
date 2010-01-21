@@ -289,8 +289,8 @@ Song is currently playing, in one of the following formats:
 example(np: Artist - Album - Track)
 example(np: Artist - Track)
 
-Let's further assume such a program is called tt(cmus-rstat.sh). If the
-player is stopped is displays: tt([cmus]: -stopped-)
+Let's further assume such a program is called tt(audio-stat). If the
+player is stopped is displays: tt(-stopped-)
 
 Now wouldn't it be convenient if we could use such information in order to
 make queries with the tt(letssingit) backend (which queries
@@ -303,10 +303,10 @@ function LOOKUP_qh_letssingit+LPAR()+RPAR() {
     local np
     case ${mode} in
     (artist|album|song)
-        np="$(cmus-rstat.sh)"
+        np="$(audio-stat)"
         np=${np/np: /}
-        if [[ ${np} == '[cmus]: -stopped-' ]] ; then
-            printf '\n  Cmus is currently playing nothing!\n\n'
+        if [[ ${np} == '-stopped-' ]] ; then
+            printf '\n  Currently not playing anything!\n\n'
             return 3
         fi
         ;;
@@ -320,7 +320,7 @@ function LOOKUP_qh_letssingit+LPAR()+RPAR() {
         if [[ ${np} == *' - '* ]] ; then
             QUERY=${np#* - }
         else
-            printf '\n Could not get album (%s)!\n\n' "$(cmus-rstat.sh)"
+            printf '\n Could not get album (%s)!\n\n' "$(audio-stat)"
             return 3
         fi
         ;;
