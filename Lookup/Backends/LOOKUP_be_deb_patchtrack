@@ -38,5 +38,5 @@ if [[ -z ${QUERY} ]] ; then
 fi
 
 LOOKUP_encode -q
-LOOKUP_browser "http://patch-tracking.debian.net/package/${QUERY}"
+LOOKUP_browser "http://patch-tracker.debian.org/package/${QUERY}"
 return $?
